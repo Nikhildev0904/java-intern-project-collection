@@ -40,10 +40,15 @@ class InfiniteStreamAverage{
 
         Scanner sc = new Scanner (System.in);
 
-        System.out.println("Enter the numbers");
+        System.out.print("Enter the size of the window: ");
+        int size=sc.nextInt();
+        sc.nextLine();
+
+
+        System.out.println("Enter the numbers: ");
         String[] str = sc.nextLine().split(" ");
 
-        InfiniteStreamAverage obj = new InfiniteStreamAverage(str.length);
+        InfiniteStreamAverage obj = new InfiniteStreamAverage(size);
 
         for(String s:str){
             System.out.println(obj.computeRunningAverage(Integer.parseInt(s)));
