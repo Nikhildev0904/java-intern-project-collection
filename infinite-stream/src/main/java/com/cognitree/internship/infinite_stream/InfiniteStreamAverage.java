@@ -26,12 +26,11 @@ public class InfiniteStreamAverage<T extends Number>{
      * @return - Returns Running average of the window
      */
     double computeRunningAverage(T element){
-        if (window.getLength() == size) {
-            sum -= window.dequeue().doubleValue();
-        }
+        T temp = window.enqueue(element);
 
+        if(temp != null)
+            sum -= temp.doubleValue();
 
-        window.enqueue(element);
         sum += element.doubleValue();
 
         return sum / window.getLength();

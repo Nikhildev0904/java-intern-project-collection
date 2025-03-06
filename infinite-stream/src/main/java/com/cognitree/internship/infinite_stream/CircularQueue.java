@@ -8,6 +8,7 @@ public class CircularQueue<T extends Number> {
     private int front;
     private int rear;
     private final T[] nums;
+    private final int capacity;
     private int length;
 
     /**
@@ -16,8 +17,9 @@ public class CircularQueue<T extends Number> {
      */
     CircularQueue(int size){
        this.nums = (T[]) new Number[size];
-       front = -1;
-       rear = -1;
+       this.front = 0;
+       this.length = 0;
+       this.capacity = size;
        this.length = 0;
     }
 
@@ -25,54 +27,26 @@ public class CircularQueue<T extends Number> {
      * Function to insert numbers into the queue
      * @param element - number to be inserted
      */
-    public final void enqueue(T element){
-       if(isFull()){
-           System.out.println("Cannot Insert, queue is full");
-           return;
-       } else if (front == -1) {
-           front = 0;
-       }
+    public final T enqueue(T element){
+        T last = null;
 
-       rear = ((rear + 1) % nums.length);
-       nums[rear] = element;
-       length++;
+        if (length == capacity) {
+            last = nums[front];
+            nums[front] = element;
 
-    }
-
-    /**
-     * Function to remove the element at the front
-     * @return - The element removed
-     */
-    public final T dequeue(){
-        if(isEmpty()){
-            System.out.println("Cannot delete queue is empty");
-            return null;
+            front = (front + 1) % capacity;
+            rear = (rear + 1) % capacity;
+        } else {
+            nums[rear] = element;
+            rear = (rear + 1) % capacity;
+            length++;
         }
+        return last;
 
-        T temp = nums[front];
-
-        if (front == rear) {
-            front = -1;
-            rear = -1;
-        }
-        else{
-            front=((front+1) % nums.length);
-        }
-
-        length--;
-        return temp;
     }
 
     public int getLength() {
         return length;
-    }
-
-    public boolean isFull() {
-        return (rear + 1) % nums.length == front;
-    }
-
-    public boolean isEmpty() {
-        return front == -1;
     }
 
 }
