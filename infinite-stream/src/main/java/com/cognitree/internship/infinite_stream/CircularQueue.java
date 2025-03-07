@@ -1,12 +1,14 @@
 package com.cognitree.internship.infinite_stream;
 
+import java.util.Iterator;
+
 /**
  * Class to implement CircularQueue
  *
  * @param <T> - Generic type
  */
-public class CircularQueue<T> {
-    private final T[] nums;
+public class CircularQueue<T> implements Iterable<T> {
+    private final T[] array;
     private int index;
     private int length;
 
@@ -16,7 +18,7 @@ public class CircularQueue<T> {
      * @param size - size of queue
      */
     public CircularQueue(int size) {
-        this.nums = (T[]) new Object[size];
+        this.array = (T[]) new Object[size];
         this.index = -1;
         this.length = 0;
     }
@@ -28,18 +30,40 @@ public class CircularQueue<T> {
      */
     public final T enqueue(T element) {
         T last = null;
-        index = (index + 1) % nums.length;
-        if (length == nums.length) {
-            last = nums[index];
+        index = (index + 1) % array.length;
+        if (length == array.length) {
+            last = array[index];
         } else {
             length++;
         }
-        nums[index] = element;
+        array[index] = element;
         return last;
     }
 
     public int getLength() {
         return length;
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private int head = ((index + 1) - length + array.length) % array.length;
+            private int count = 0;
+
+            @Override
+            public boolean hasNext() {
+                return count < length;
+            }
+
+            @Override
+            public T next() {
+                T value = array[head];
+                head = (head + 1) % array.length;
+                count++;
+                return value;
+            }
+        };
+    }
+
 
 }
