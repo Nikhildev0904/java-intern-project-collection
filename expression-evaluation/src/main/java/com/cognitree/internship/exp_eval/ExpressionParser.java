@@ -3,7 +3,49 @@ package com.cognitree.internship.exp_eval;
 import java.util.*;
 
 public class ExpressionParser {
-    public List<String> tokenise(String input) {
+
+    public List<String> parsingExpression(String expression){
+        List<String> tokenisedExpression = tokenise(expression);
+        List<String> parsedExpression = null;
+        if (tokenisedExpression != null) {
+            parsedExpression = infixToPostfix(tokenisedExpression);
+        }
+        return parsedExpression;
+    }
+
+    public Set<String> extractVariables(List<String> parsedExpression) {
+        Set<String> variables = new HashSet<>();
+        for (String token : parsedExpression) {
+            if (!isNumber(token) && !isOperator(token) &&
+                    !token.equals("(") && !token.equals(")")) {
+                variables.add(token);
+            }
+        }
+        return variables;
+    }
+
+    public double evaluateExpression(HashMap<String, Double> variables, List<String> parsedExpression) {
+        Stack<Double> stack = new Stack<>();
+        for (String token : parsedExpression) {
+            if (isNumber(token)) {
+                stack.push(Double.parseDouble(token));
+            } else if (isOperator(token)) {
+                if (stack.size() < 2) {
+                    System.out.print("Insufficient operands for operator " + token);
+                    return 0;
+                }
+                double value2 = stack.pop();
+                double value1 = stack.pop();
+                double result = evaluate(value1, value2, token);
+                stack.push(result);
+            } else {
+                stack.push(variables.get(token));
+            }
+        }
+        return stack.pop();
+    }
+
+    private List<String> tokenise(String input) {
         List<String> tokens = new ArrayList<>();
         int i = 0;
         int sizeOfInput = input.length();
@@ -33,64 +75,32 @@ public class ExpressionParser {
         return tokens;
     }
 
-    public List<String> infixToPostfix(List<String> expression) {
-        List<String> output = new ArrayList<>();
+    private List<String> infixToPostfix(List<String> expression) {
+        List<String> postfixExpression = new ArrayList<>();
         Stack<String> stack = new Stack<>();
         for (String token : expression) {
             if (isNumber(token) || Character.isLetter(token.charAt(0))) {
-                output.add(token);
+                postfixExpression.add(token);
             } else if (isOperator(token)) {
                 while (!stack.isEmpty() && isOperator(stack.peek()) &&
                         precedence(stack.peek()) >= precedence(token)) {
-                    output.add(stack.pop());
+                    postfixExpression.add(stack.pop());
                 }
                 stack.push(token);
             } else if (token.equals("(")) {
                 stack.push(token);
             } else if (token.equals(")")) {
                 while (!stack.isEmpty() && !stack.peek().equals("(")) {
-                    output.add(stack.pop());
+                    postfixExpression.add(stack.pop());
                 }
                 stack.pop();
             }
         }
         while (!stack.isEmpty()) {
             String top = stack.pop();
-            output.add(top);
+            postfixExpression.add(top);
         }
-        return output;
-    }
-
-    public double evaluateExpression(HashMap<String, Double> variables, List<String> parsedExpression) {
-        Stack<Double> stack = new Stack<>();
-        for (String token : parsedExpression) {
-            if (isNumber(token)) {
-                stack.push(Double.parseDouble(token));
-            } else if (isOperator(token)) {
-                if (stack.size() < 2) {
-                    System.out.print("Insufficient operands for operator " + token);
-                    return 0;
-                }
-                double value2 = stack.pop();
-                double value1 = stack.pop();
-                double result = evaluate(value1, value2, token);
-                stack.push(result);
-            } else {
-                stack.push(variables.get(token));
-            }
-        }
-        return stack.pop();
-    }
-
-    public Set<String> extractVariables(List<String> parsedExpression) {
-        Set<String> variables = new HashSet<>();
-        for (String token : parsedExpression) {
-            if (!isNumber(token) && !isOperator(token) &&
-                    !token.equals("(") && !token.equals(")")) {
-                variables.add(token);
-            }
-        }
-        return variables;
+        return postfixExpression;
     }
 
     private int precedence(String operator) {

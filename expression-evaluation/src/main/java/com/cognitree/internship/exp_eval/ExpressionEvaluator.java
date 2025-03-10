@@ -10,36 +10,23 @@ public class ExpressionEvaluator {
         this.expressionParser = new ExpressionParser();
     }
 
-    public boolean processingInput(String input) {
-        List<String> expression = expressionParser.tokenise(input);
-        if (expression != null) {
-            this.parsedExpression = expressionParser.infixToPostfix(expression);
+    public boolean tokenizeAndConvertToPostfix(String expression) {
+        List<String> parsedExpression = expressionParser.parsingExpression(expression);
+        if (parsedExpression != null) {
+            this.parsedExpression = parsedExpression;
             return true;
         }
         return false;
     }
 
-    public double evaluate() {
-        HashMap<String, Double> userValues = enterVariables();
+    public double evaluate(HashMap<String, Double> userValues) {
         double result = expressionParser.evaluateExpression(userValues, parsedExpression);
         return result;
     }
 
-    public HashMap<String, Double> enterVariables() throws RuntimeException {
-        Scanner scanner = new Scanner(System.in);
+    public Set<String> extractVariables() throws RuntimeException {
         Set<String> variables = expressionParser.extractVariables(parsedExpression);
-        HashMap<String, Double> valuesOfVariables = new HashMap<>();
-        for (String variable : variables) {
-            System.out.print("Enter the value of " + variable + ": ");
-            double value;
-            try {
-                value = Double.parseDouble(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
-            }
-            valuesOfVariables.put(variable, value);
-        }
-        return valuesOfVariables;
+        return variables;
     }
 
 }
