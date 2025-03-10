@@ -3,8 +3,7 @@ package com.cognitree.internship.exp_eval;
 import java.util.*;
 
 public class ExpressionParser {
-
-    public List<String> parsingExpression(String expression){
+    public List<String> parsingExpression(String expression) {
         List<String> tokenisedExpression = tokenise(expression);
         List<String> parsedExpression = null;
         if (tokenisedExpression != null) {
@@ -24,26 +23,6 @@ public class ExpressionParser {
         return variables;
     }
 
-    public double evaluateExpression(HashMap<String, Double> variables, List<String> parsedExpression) {
-        Stack<Double> stack = new Stack<>();
-        for (String token : parsedExpression) {
-            if (isNumber(token)) {
-                stack.push(Double.parseDouble(token));
-            } else if (isOperator(token)) {
-                if (stack.size() < 2) {
-                    System.out.print("Insufficient operands for operator " + token);
-                    return 0;
-                }
-                double value2 = stack.pop();
-                double value1 = stack.pop();
-                double result = evaluate(value1, value2, token);
-                stack.push(result);
-            } else {
-                stack.push(variables.get(token));
-            }
-        }
-        return stack.pop();
-    }
 
     private List<String> tokenise(String input) {
         List<String> tokens = new ArrayList<>();
@@ -69,6 +48,7 @@ public class ExpressionParser {
                 tokens.add(String.valueOf(character));
                 i++;
             } else {
+                System.out.println("Wrong Input");
                 return null;
             }
         }
@@ -112,24 +92,7 @@ public class ExpressionParser {
         };
     }
 
-    private double evaluate(double value1, double value2, String token) {
-        switch (token) {
-            case "+":
-                return value1 + value2;
-            case "-":
-                return value1 - value2;
-            case "*":
-                return value1 * value2;
-            case "/":
-                return value1 / value2;
-            case "^":
-                return Math.pow(value1, value2);
-            default:
-                throw new RuntimeException("Unknown operator: " + token);
-        }
-    }
-
-    private static boolean isNumber(String token) {
+    private boolean isNumber(String token) {
         try {
             Double.parseDouble(token);
             return true;
@@ -138,9 +101,10 @@ public class ExpressionParser {
         }
     }
 
-    private static boolean isOperator(String token) {
+    private boolean isOperator(String token) {
         char operator = token.charAt(0);
         return operator == '+' || operator == '-' || operator == '*'
                 || operator == '/' || operator == '^';
     }
+
 }

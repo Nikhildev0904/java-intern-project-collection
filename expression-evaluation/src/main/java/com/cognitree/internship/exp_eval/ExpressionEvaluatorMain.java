@@ -8,22 +8,17 @@ public class ExpressionEvaluatorMain {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String expression = scanner.nextLine().trim();
-        ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
-        boolean isParsed = expressionEvaluator.tokenizeAndConvertToPostfix(expression);
-        if (!isParsed) {
-            System.out.println("Invalid Input");
-            return;
-        }
-        Set<String> extractedVariables = expressionEvaluator.extractVariables();
+        ExpressionEvaluation expressionEvaluator = new ExpressionEvaluation();
+        Set<String> variables = expressionEvaluator.extractVariables(expression);
         while (true) {
-            HashMap<String, Double> valuesOfVariables;
+            HashMap<String, Double> variableValues;
             try {
-                valuesOfVariables = variableValues(extractedVariables, scanner);
+                variableValues = setVariableValues(variables, scanner);
             } catch (RuntimeException e) {
                 System.out.println("Invalid Number :" + e);
                 return;
             }
-            double result = expressionEvaluator.evaluate(valuesOfVariables);
+            double result = expressionEvaluator.evaluate(variableValues);
             System.out.println("Result: " + result);
             System.out.print("Try again with new input values? (y/n): ");
             String userPrompt = scanner.nextLine();
@@ -33,7 +28,7 @@ public class ExpressionEvaluatorMain {
         }
     }
 
-    private static HashMap<String, Double> variableValues(Set<String> extractedVariables,Scanner scanner){
+    private static HashMap<String, Double> setVariableValues(Set<String> extractedVariables, Scanner scanner) {
         HashMap<String, Double> values = new HashMap<>();
         for (String variable : extractedVariables) {
             System.out.print("Enter the value of " + variable + ": ");
