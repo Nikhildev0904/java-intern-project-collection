@@ -10,11 +10,13 @@ public class ExpressionEvaluator {
         this.expressionParser = new ExpressionParser();
     }
 
-    public void processingInput(String input) {
+    public boolean processingInput(String input) {
         List<String> expression = expressionParser.tokenise(input);
         if (expression != null) {
             this.parsedExpression = expressionParser.infixToPostfix(expression);
+            return true;
         }
+        return false;
     }
 
     public double evaluate() {
@@ -23,13 +25,18 @@ public class ExpressionEvaluator {
         return result;
     }
 
-    public HashMap<String, Double> enterVariables() {
+    public HashMap<String, Double> enterVariables() throws RuntimeException {
         Scanner scanner = new Scanner(System.in);
         Set<String> variables = expressionParser.extractVariables(parsedExpression);
         HashMap<String, Double> valuesOfVariables = new HashMap<>();
         for (String variable : variables) {
             System.out.print("Enter the value of " + variable + ": ");
-            double value = Double.parseDouble(scanner.nextLine());
+            double value;
+            try {
+                value = Double.parseDouble(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(e);
+            }
             valuesOfVariables.put(variable, value);
         }
         return valuesOfVariables;

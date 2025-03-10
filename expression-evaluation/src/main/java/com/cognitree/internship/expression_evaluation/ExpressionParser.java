@@ -27,7 +27,6 @@ public class ExpressionParser {
                 tokens.add(String.valueOf(character));
                 i++;
             } else {
-                System.out.println("Wrong Input");
                 return null;
             }
         }
