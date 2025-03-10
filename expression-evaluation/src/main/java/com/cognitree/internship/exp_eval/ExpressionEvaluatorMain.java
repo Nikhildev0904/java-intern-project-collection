@@ -1,4 +1,4 @@
-package com.cognitree.internship.expression_evaluation;
+package com.cognitree.internship.exp_eval;
 
 import java.util.Scanner;
 
