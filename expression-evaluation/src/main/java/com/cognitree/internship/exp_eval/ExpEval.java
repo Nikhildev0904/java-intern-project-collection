@@ -2,17 +2,23 @@ package com.cognitree.internship.exp_eval;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
-public class ExpressionCalculator {
+public class ExpEval {
+    private final ExpParser expressionParser;
 
-    public double calculate(Map<String, Double> variables, List<String> parsedExpression) {
-        double result = calculatePostfix(variables, parsedExpression);
-        return result;
+    public ExpEval(String expression) {
+        this.expressionParser = new ExpParser(expression);
     }
 
-    private double calculatePostfix(Map<String, Double> variables, List<String> parsedExpression) {
+    public Set<String> getVariables() {
+        return expressionParser.extractVariables();
+    }
+
+    public double calculate(Map<String, Double> variables) {
         Stack<Double> stack = new Stack<>();
+        List<String> parsedExpression = expressionParser.getParsedExpression();
         for (String token : parsedExpression) {
             if (isNumber(token)) {
                 stack.push(Double.parseDouble(token));
@@ -22,7 +28,7 @@ public class ExpressionCalculator {
                 }
                 double value2 = stack.pop();
                 double value1 = stack.pop();
-                double result = arithmeticOperation(value1, value2, token);
+                double result = applyOperation(value1, value2, token);
                 stack.push(result);
             } else {
                 stack.push(variables.get(token));
@@ -31,7 +37,7 @@ public class ExpressionCalculator {
         return stack.pop();
     }
 
-    private double arithmeticOperation(double value1, double value2, String token) {
+    private double applyOperation(double value1, double value2, String token) {
         switch (token) {
             case "+":
                 return value1 + value2;

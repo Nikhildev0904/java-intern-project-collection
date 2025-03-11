@@ -7,19 +7,14 @@ import java.util.Stack;
 import java.util.HashSet;
 
 
-public class ExpressionParser {
-    public List<String> parsingExpression(String expression) throws RuntimeException {
-        List<String> parsedExpression;
-        try {
-            List<String> tokenisedExpression = tokenise(expression);
-            parsedExpression = infixToPostfix(tokenisedExpression);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
-        return parsedExpression;
+public class ExpParser {
+    private final List<String> parsedExpression;
+
+    public ExpParser(String expression) {
+        this.parsedExpression = parseExpression(expression);
     }
 
-    public Set<String> extractVariables(List<String> parsedExpression) {
+    public Set<String> extractVariables() {
         Set<String> variables = new HashSet<>();
         for (String token : parsedExpression) {
             if (!isNumber(token) && !isOperator(token) &&
@@ -30,8 +25,22 @@ public class ExpressionParser {
         return variables;
     }
 
+    public List<String> getParsedExpression() {
+        return parsedExpression;
+    }
 
-    private List<String> tokenise(String rawExpression) throws RuntimeException {
+    private List<String> parseExpression(String expression) throws RuntimeException {
+        List<String> parsedExpression;
+        try {
+            List<String> tokenisedExpression = tokeniseExpression(expression);
+            parsedExpression = convertInfixToPostfix(tokenisedExpression);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+        return parsedExpression;
+    }
+
+    private List<String> tokeniseExpression(String rawExpression) throws RuntimeException {
         List<String> tokens = new ArrayList<>();
         int i = 0;
         int sizeOfInput = rawExpression.length();
@@ -62,7 +71,7 @@ public class ExpressionParser {
         return tokens;
     }
 
-    private List<String> infixToPostfix(List<String> tokenizedExpression) {
+    private List<String> convertInfixToPostfix(List<String> tokenizedExpression) {
         List<String> postfixExpression = new ArrayList<>();
         Stack<String> stack = new Stack<>();
         for (String token : tokenizedExpression) {
@@ -70,7 +79,7 @@ public class ExpressionParser {
                 postfixExpression.add(token);
             } else if (isOperator(token)) {
                 while (!stack.isEmpty() && isOperator(stack.peek()) &&
-                        precedence(stack.peek()) >= precedence(token)) {
+                        getPrecedence(stack.peek()) >= getPrecedence(token)) {
                     postfixExpression.add(stack.pop());
                 }
                 stack.push(token);
@@ -90,7 +99,7 @@ public class ExpressionParser {
         return postfixExpression;
     }
 
-    private int precedence(String operator) {
+    private int getPrecedence(String operator) {
         return switch (operator) {
             case "+", "-" -> 1;
             case "*", "/" -> 2;
