@@ -1,6 +1,7 @@
 package com.cognitree.internship.exp_eval;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -8,18 +9,23 @@ public class ExpressionEvaluatorMain {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String expression = scanner.nextLine().trim();
-        ExpressionEvaluation expressionEvaluator = new ExpressionEvaluation();
-        Set<String> variables = expressionEvaluator.extractVariables(expression);
+        ExpressionEvaluation expressionEvaluator = null;
+        try {
+            expressionEvaluator = new ExpressionEvaluation(expression);
+        } catch (RuntimeException e) {
+            System.out.println("Error parsing the expression :" + e.getMessage());
+            return;
+        }
+        Set<String> variables = expressionEvaluator.getVariables();
         while (true) {
-            HashMap<String, Double> variableValues;
             try {
-                variableValues = setVariableValues(variables, scanner);
+                Map<String, Double> variableValues = setVariableValues(variables, scanner);
+                double result = expressionEvaluator.evaluate(variableValues);
+                System.out.println("Result: " + result);
             } catch (RuntimeException e) {
-                System.out.println("Invalid Number :" + e);
+                System.out.println("Error during evaluation: " + e.getMessage());
                 return;
             }
-            double result = expressionEvaluator.evaluate(variableValues);
-            System.out.println("Result: " + result);
             System.out.print("Try again with new input values? (y/n): ");
             String userPrompt = scanner.nextLine();
             if (userPrompt.equalsIgnoreCase("n")) {
@@ -36,7 +42,7 @@ public class ExpressionEvaluatorMain {
             try {
                 value = Double.parseDouble(scanner.nextLine());
             } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Invalid Number " + e);
             }
             values.put(variable, value);
         }

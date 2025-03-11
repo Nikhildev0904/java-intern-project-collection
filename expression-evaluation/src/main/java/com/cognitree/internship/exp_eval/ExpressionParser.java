@@ -1,13 +1,20 @@
 package com.cognitree.internship.exp_eval;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.HashSet;
+
 
 public class ExpressionParser {
-    public List<String> parsingExpression(String expression) {
-        List<String> tokenisedExpression = tokenise(expression);
-        List<String> parsedExpression = null;
-        if (tokenisedExpression != null) {
+    public List<String> parsingExpression(String expression) throws RuntimeException {
+        List<String> parsedExpression;
+        try {
+            List<String> tokenisedExpression = tokenise(expression);
             parsedExpression = infixToPostfix(tokenisedExpression);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
         return parsedExpression;
     }
@@ -24,41 +31,41 @@ public class ExpressionParser {
     }
 
 
-    private List<String> tokenise(String input) {
+    private List<String> tokenise(String rawExpression) throws RuntimeException {
         List<String> tokens = new ArrayList<>();
         int i = 0;
-        int sizeOfInput = input.length();
+        int sizeOfInput = rawExpression.length();
         while (i < sizeOfInput) {
-            char character = input.charAt(i);
+            char character = rawExpression.charAt(i);
             if (character == ' ') {
                 i++;
             } else if (Character.isDigit(character) || character == '.') {
                 int start = i;
-                while (i < sizeOfInput && (Character.isDigit(input.charAt(i)) || input.charAt(i) == '.')) {
+                while (i < sizeOfInput && (Character.isDigit(rawExpression.charAt(i)) || rawExpression.charAt(i) == '.')) {
                     i++;
                 }
-                tokens.add(input.substring(start, i));
+                tokens.add(rawExpression.substring(start, i));
             } else if (Character.isLetter(character)) {
                 int start = i;
-                while (i < sizeOfInput && Character.isLetter(input.charAt(i))) {
+                while (i < sizeOfInput && Character.isLetter(rawExpression.charAt(i))) {
                     i++;
                 }
-                tokens.add(input.substring(start, i));
+                tokens.add(rawExpression.substring(start, i));
             } else if (isOperator(String.valueOf(character)) || character == '(' || character == ')') {
                 tokens.add(String.valueOf(character));
                 i++;
             } else {
                 System.out.println("Wrong Input");
-                return null;
+                throw new RuntimeException("Please provide valid Input");
             }
         }
         return tokens;
     }
 
-    private List<String> infixToPostfix(List<String> expression) {
+    private List<String> infixToPostfix(List<String> tokenizedExpression) {
         List<String> postfixExpression = new ArrayList<>();
         Stack<String> stack = new Stack<>();
-        for (String token : expression) {
+        for (String token : tokenizedExpression) {
             if (isNumber(token) || Character.isLetter(token.charAt(0))) {
                 postfixExpression.add(token);
             } else if (isOperator(token)) {

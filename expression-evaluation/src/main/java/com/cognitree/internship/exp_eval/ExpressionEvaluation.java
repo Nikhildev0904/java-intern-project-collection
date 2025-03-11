@@ -1,22 +1,27 @@
 package com.cognitree.internship.exp_eval;
 
-import java.util.*;
+import java.util.Set;
+import java.util.Map;
+import java.util.List;
 
 public class ExpressionEvaluation {
-    private List<String> parsedExpression;
+    private final ExpressionParser expressionParser;
+    private final ExpressionCalculator expressionCalculator;
+    private final List<String> parsedExpression;
 
-    public Set<String> extractVariables(String expression) {
-        ExpressionParser expressionParser = new ExpressionParser();
+    public ExpressionEvaluation(String expression) {
+        this.expressionParser = new ExpressionParser();
+        this.expressionCalculator = new ExpressionCalculator();
         this.parsedExpression = expressionParser.parsingExpression(expression);
-        Set<String> extractedVariables = expressionParser.extractVariables(parsedExpression);
+    }
+
+    public Set<String> getVariables() {
+        Set<String> extractedVariables = expressionParser.extractVariables(this.parsedExpression);
         return extractedVariables;
     }
 
-    public double evaluate(HashMap<String, Double> variableValues) {
-        ExpressionCalculator expressionCalculator = new ExpressionCalculator();
+    public double evaluate(Map<String, Double> variableValues) {
         double result = expressionCalculator.calculate(variableValues, this.parsedExpression);
         return result;
     }
-
-
 }

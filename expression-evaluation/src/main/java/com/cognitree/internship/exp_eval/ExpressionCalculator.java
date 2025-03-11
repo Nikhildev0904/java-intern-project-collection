@@ -1,27 +1,28 @@
 package com.cognitree.internship.exp_eval;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 public class ExpressionCalculator {
 
-    public double calculate(HashMap<String, Double> userValues, List<String> parsedExpression) {
-        double result = calculatePostfix(userValues, parsedExpression);
+    public double calculate(Map<String, Double> variables, List<String> parsedExpression) {
+        double result = calculatePostfix(variables, parsedExpression);
         return result;
     }
 
-    private double calculatePostfix(HashMap<String, Double> variables, List<String> parsedExpression) {
+    private double calculatePostfix(Map<String, Double> variables, List<String> parsedExpression) {
         Stack<Double> stack = new Stack<>();
         for (String token : parsedExpression) {
             if (isNumber(token)) {
                 stack.push(Double.parseDouble(token));
             } else if (isOperator(token)) {
                 if (stack.size() < 2) {
-                    System.out.print("Insufficient operands for operator " + token);
-                    return 0;
+                    throw new RuntimeException("Insufficient Operands");
                 }
                 double value2 = stack.pop();
                 double value1 = stack.pop();
-                double result = arithmaticOperation(value1, value2, token);
+                double result = arithmeticOperation(value1, value2, token);
                 stack.push(result);
             } else {
                 stack.push(variables.get(token));
@@ -30,7 +31,7 @@ public class ExpressionCalculator {
         return stack.pop();
     }
 
-    private double arithmaticOperation(double value1, double value2, String token) {
+    private double arithmeticOperation(double value1, double value2, String token) {
         switch (token) {
             case "+":
                 return value1 + value2;
