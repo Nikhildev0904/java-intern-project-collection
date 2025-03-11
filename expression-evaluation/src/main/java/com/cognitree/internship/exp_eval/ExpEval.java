@@ -18,54 +18,39 @@ public class ExpEval {
 
     public double calculate(Map<String, Double> variables) {
         Stack<Double> stack = new Stack<>();
-        List<String> parsedExpression = expressionParser.getParsedExpression();
-        for (String token : parsedExpression) {
-            if (isNumber(token)) {
-                stack.push(Double.parseDouble(token));
-            } else if (isOperator(token)) {
+        List<Token> parsedExpression = expressionParser.getParsedExpression();
+        for (Token token : parsedExpression) {
+            if (token instanceof LiteralToken) {
+                stack.push((double) token.getValue());
+            } else if (token instanceof OperatorToken) {
                 if (stack.size() < 2) {
                     throw new RuntimeException("Insufficient Operands");
                 }
                 double value2 = stack.pop();
                 double value1 = stack.pop();
-                double result = applyOperation(value1, value2, token);
+                double result = applyOperation(value1, value2, (char) token.getValue());
                 stack.push(result);
             } else {
-                stack.push(variables.get(token));
+                stack.push(variables.get((String) token.getValue()));
             }
         }
         return stack.pop();
     }
 
-    private double applyOperation(double value1, double value2, String token) {
-        switch (token) {
-            case "+":
+    private double applyOperation(double value1, double value2, char operator) {
+        switch (operator) {
+            case '+':
                 return value1 + value2;
-            case "-":
+            case '-':
                 return value1 - value2;
-            case "*":
+            case '*':
                 return value1 * value2;
-            case "/":
+            case '/':
                 return value1 / value2;
-            case "^":
+            case '^':
                 return Math.pow(value1, value2);
             default:
-                throw new RuntimeException("Unknown operator: " + token);
+                throw new RuntimeException("Unknown operator: " + operator);
         }
-    }
-
-    private boolean isNumber(String token) {
-        try {
-            Double.parseDouble(token);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private boolean isOperator(String token) {
-        char operator = token.charAt(0);
-        return operator == '+' || operator == '-' || operator == '*'
-                || operator == '/' || operator == '^';
     }
 }

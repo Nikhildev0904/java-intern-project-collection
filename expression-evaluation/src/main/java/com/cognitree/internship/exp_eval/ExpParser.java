@@ -6,9 +6,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.HashSet;
 
-
 public class ExpParser {
-    private final List<String> parsedExpression;
+    private final List<Token> parsedExpression;
 
     public ExpParser(String expression) {
         this.parsedExpression = parseExpression(expression);
@@ -16,23 +15,22 @@ public class ExpParser {
 
     public Set<String> extractVariables() {
         Set<String> variables = new HashSet<>();
-        for (String token : parsedExpression) {
-            if (!isNumber(token) && !isOperator(token) &&
-                    !token.equals("(") && !token.equals(")")) {
-                variables.add(token);
+        for (Token token : parsedExpression) {
+            if (token instanceof VariableToken) {
+                variables.add((String) token.getValue());
             }
         }
         return variables;
     }
 
-    public List<String> getParsedExpression() {
+    public List<Token> getParsedExpression() {
         return parsedExpression;
     }
 
-    private List<String> parseExpression(String expression) throws RuntimeException {
-        List<String> parsedExpression;
+    private List<Token> parseExpression(String expression) throws RuntimeException {
+        List<Token> parsedExpression;
         try {
-            List<String> tokenisedExpression = tokeniseExpression(expression);
+            List<Token> tokenisedExpression = tokeniseExpression(expression);
             parsedExpression = convertInfixToPostfix(tokenisedExpression);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -40,8 +38,8 @@ public class ExpParser {
         return parsedExpression;
     }
 
-    private List<String> tokeniseExpression(String rawExpression) throws RuntimeException {
-        List<String> tokens = new ArrayList<>();
+    private List<Token> tokeniseExpression(String rawExpression) throws RuntimeException {
+        List<Token> tokens = new ArrayList<>();
         int i = 0;
         int sizeOfInput = rawExpression.length();
         while (i < sizeOfInput) {
@@ -53,15 +51,17 @@ public class ExpParser {
                 while (i < sizeOfInput && (Character.isDigit(rawExpression.charAt(i)) || rawExpression.charAt(i) == '.')) {
                     i++;
                 }
-                tokens.add(rawExpression.substring(start, i));
+                double value = Double.parseDouble(rawExpression.substring(start, i));
+                tokens.add(new LiteralToken(value));
             } else if (Character.isLetter(character)) {
                 int start = i;
                 while (i < sizeOfInput && Character.isLetter(rawExpression.charAt(i))) {
                     i++;
                 }
-                tokens.add(rawExpression.substring(start, i));
-            } else if (isOperator(String.valueOf(character)) || character == '(' || character == ')') {
-                tokens.add(String.valueOf(character));
+                String variable = rawExpression.substring(start, i);
+                tokens.add(new VariableToken(variable));
+            } else if (isOperator(String.valueOf(character))) {
+                tokens.add(new OperatorToken(character));
                 i++;
             } else {
                 System.out.println("Wrong Input");
@@ -71,56 +71,38 @@ public class ExpParser {
         return tokens;
     }
 
-    private List<String> convertInfixToPostfix(List<String> tokenizedExpression) {
-        List<String> postfixExpression = new ArrayList<>();
-        Stack<String> stack = new Stack<>();
-        for (String token : tokenizedExpression) {
-            if (isNumber(token) || Character.isLetter(token.charAt(0))) {
+    private List<Token> convertInfixToPostfix(List<Token> tokenizedExpression) {
+        List<Token> postfixExpression = new ArrayList<>();
+        Stack<Token> stack = new Stack<>();
+        for (Token token : tokenizedExpression) {
+            if (token instanceof OperandToken) {
                 postfixExpression.add(token);
-            } else if (isOperator(token)) {
-                while (!stack.isEmpty() && isOperator(stack.peek()) &&
-                        getPrecedence(stack.peek()) >= getPrecedence(token)) {
-                    postfixExpression.add(stack.pop());
-                }
+            } else if (token instanceof OperatorToken && ((char) token.getValue() == '(')) {
                 stack.push(token);
-            } else if (token.equals("(")) {
-                stack.push(token);
-            } else if (token.equals(")")) {
-                while (!stack.isEmpty() && !stack.peek().equals("(")) {
+            } else if (token instanceof OperatorToken && ((char) token.getValue() == ')')) {
+                while (!stack.isEmpty() && !((char) stack.peek().getValue() == '(')) {
                     postfixExpression.add(stack.pop());
                 }
                 stack.pop();
+            } else if (token instanceof OperatorToken) {
+                while (!stack.isEmpty() && stack.peek() instanceof OperatorToken &&
+                        ((OperatorToken) stack.peek()).getPrecedence() >= ((OperatorToken) token).getPrecedence()) {
+                    postfixExpression.add(stack.pop());
+                }
+                stack.push(token);
             }
         }
         while (!stack.isEmpty()) {
-            String top = stack.pop();
+            Token top = stack.pop();
             postfixExpression.add(top);
         }
         return postfixExpression;
     }
 
-    private int getPrecedence(String operator) {
-        return switch (operator) {
-            case "+", "-" -> 1;
-            case "*", "/" -> 2;
-            case "^" -> 3;
-            default -> 0;
-        };
-    }
-
-    private boolean isNumber(String token) {
-        try {
-            Double.parseDouble(token);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
     private boolean isOperator(String token) {
         char operator = token.charAt(0);
         return operator == '+' || operator == '-' || operator == '*'
-                || operator == '/' || operator == '^';
+                || operator == '/' || operator == '^' || operator == '(' || operator == ')';
     }
 
 }
