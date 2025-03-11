@@ -7,15 +7,6 @@ public class OperatorToken implements Token {
         this.operator = operator;
     }
 
-    public int getPrecedence() {
-        return switch (operator) {
-            case '+', '-' -> 1;
-            case '*', '/' -> 2;
-            case '^' -> 3;
-            default -> 0;
-        };
-    }
-
     @Override
     public Object getValue() {
         return operator;

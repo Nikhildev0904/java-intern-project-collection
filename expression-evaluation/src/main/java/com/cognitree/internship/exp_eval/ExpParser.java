@@ -86,7 +86,7 @@ public class ExpParser {
                 stack.pop();
             } else if (token instanceof OperatorToken) {
                 while (!stack.isEmpty() && stack.peek() instanceof OperatorToken &&
-                        ((OperatorToken) stack.peek()).getPrecedence() >= ((OperatorToken) token).getPrecedence()) {
+                        getPrecedence((char) stack.peek().getValue()) >= getPrecedence((char) token.getValue())) {
                     postfixExpression.add(stack.pop());
                 }
                 stack.push(token);
@@ -97,6 +97,15 @@ public class ExpParser {
             postfixExpression.add(top);
         }
         return postfixExpression;
+    }
+
+    private int getPrecedence(char operator) {
+        return switch (operator) {
+            case '+', '-' -> 1;
+            case '*', '/' -> 2;
+            case '^' -> 3;
+            default -> 0;
+        };
     }
 
     private boolean isOperator(String token) {
