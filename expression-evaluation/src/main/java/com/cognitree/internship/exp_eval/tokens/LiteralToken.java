@@ -1,4 +1,4 @@
-package com.cognitree.internship.exp_eval;
+package com.cognitree.internship.exp_eval.tokens;
 
 public class LiteralToken implements OperandToken {
     private final double value;
@@ -7,8 +7,7 @@ public class LiteralToken implements OperandToken {
         this.value = value;
     }
 
-    @Override
-    public Object getValue() {
+    public double getValue() {
         return value;
     }
 }

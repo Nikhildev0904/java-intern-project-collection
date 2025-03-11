@@ -25,7 +25,6 @@ public class ExpEvalMain {
                 System.out.println("Result: " + result);
             } catch (RuntimeException e) {
                 System.out.println("Error during evaluation: " + e.getMessage());
-                return;
             }
             System.out.print("Try again with new input values? (y/n): ");
             String userPrompt = scanner.nextLine();

@@ -1,4 +1,4 @@
-package com.cognitree.internship.exp_eval;
+package com.cognitree.internship.exp_eval.tokens;
 
 public class OperatorToken implements Token {
     private final char operator;
@@ -7,8 +7,7 @@ public class OperatorToken implements Token {
         this.operator = operator;
     }
 
-    @Override
-    public Object getValue() {
+    public char getOperator() {
         return operator;
     }
 }

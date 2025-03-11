@@ -1,5 +1,7 @@
 package com.cognitree.internship.exp_eval;
 
+import com.cognitree.internship.exp_eval.tokens.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +19,7 @@ public class ExpParser {
         Set<String> variables = new HashSet<>();
         for (Token token : parsedExpression) {
             if (token instanceof VariableToken) {
-                variables.add((String) token.getValue());
+                variables.add(((VariableToken) token).getVarName());
             }
         }
         return variables;
@@ -77,16 +79,18 @@ public class ExpParser {
         for (Token token : tokenizedExpression) {
             if (token instanceof OperandToken) {
                 postfixExpression.add(token);
-            } else if (token instanceof OperatorToken && ((char) token.getValue() == '(')) {
+            } else if ((token instanceof OperatorToken) && (((OperatorToken) token).getOperator() == '(')) {
                 stack.push(token);
-            } else if (token instanceof OperatorToken && ((char) token.getValue() == ')')) {
-                while (!stack.isEmpty() && !((char) stack.peek().getValue() == '(')) {
+            } else if (token instanceof OperatorToken && (((OperatorToken) token).getOperator() == ')')) {
+                while (!stack.isEmpty() && stack.peek() instanceof OperatorToken &&
+                        !(((OperatorToken) stack.peek()).getOperator() == '(')) {
                     postfixExpression.add(stack.pop());
                 }
                 stack.pop();
             } else if (token instanceof OperatorToken) {
                 while (!stack.isEmpty() && stack.peek() instanceof OperatorToken &&
-                        getPrecedence((char) stack.peek().getValue()) >= getPrecedence((char) token.getValue())) {
+                        getPrecedence(((OperatorToken) stack.peek()).getOperator()) >=
+                                getPrecedence((char) ((OperatorToken) token).getOperator())) {
                     postfixExpression.add(stack.pop());
                 }
                 stack.push(token);

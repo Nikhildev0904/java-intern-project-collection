@@ -1,4 +1,4 @@
-package com.cognitree.internship.exp_eval;
+package com.cognitree.internship.exp_eval.tokens;
 
 public class VariableToken implements OperandToken {
     private final String varName;
@@ -7,8 +7,7 @@ public class VariableToken implements OperandToken {
         this.varName = varName;
     }
 
-    @Override
-    public Object getValue() {
+    public String getVarName() {
         return varName;
     }
 }

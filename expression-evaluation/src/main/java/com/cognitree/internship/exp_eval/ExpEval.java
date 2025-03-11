@@ -1,5 +1,10 @@
 package com.cognitree.internship.exp_eval;
 
+import com.cognitree.internship.exp_eval.tokens.LiteralToken;
+import com.cognitree.internship.exp_eval.tokens.OperatorToken;
+import com.cognitree.internship.exp_eval.tokens.Token;
+import com.cognitree.internship.exp_eval.tokens.VariableToken;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,17 +26,19 @@ public class ExpEval {
         List<Token> parsedExpression = expressionParser.getParsedExpression();
         for (Token token : parsedExpression) {
             if (token instanceof LiteralToken) {
-                stack.push((double) token.getValue());
+                stack.push(((LiteralToken) token).getValue());
             } else if (token instanceof OperatorToken) {
                 if (stack.size() < 2) {
                     throw new RuntimeException("Insufficient Operands");
                 }
                 double value2 = stack.pop();
                 double value1 = stack.pop();
-                double result = applyOperation(value1, value2, (char) token.getValue());
+                double result = applyOperation(value1, value2, ((OperatorToken) token).getOperator());
                 stack.push(result);
             } else {
-                stack.push(variables.get((String) token.getValue()));
+                if (token instanceof VariableToken) {
+                    stack.push(variables.get(((VariableToken) token).getVarName()));
+                }
             }
         }
         return stack.pop();
