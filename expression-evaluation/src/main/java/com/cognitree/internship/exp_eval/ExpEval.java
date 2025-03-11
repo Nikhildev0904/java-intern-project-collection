@@ -25,19 +25,23 @@ public class ExpEval {
         Stack<Double> stack = new Stack<>();
         List<Token> parsedExpression = expressionParser.getParsedExpression();
         for (Token token : parsedExpression) {
-            if (token instanceof LiteralToken) {
-                stack.push(((LiteralToken) token).getValue());
-            } else if (token instanceof OperatorToken) {
+            if (token instanceof LiteralToken literalToken) {
+                stack.push(literalToken.getValue());
+            } else if (token instanceof OperatorToken operatorToken) {
                 if (stack.size() < 2) {
                     throw new RuntimeException("Insufficient Operands");
                 }
                 double value2 = stack.pop();
                 double value1 = stack.pop();
-                double result = applyOperation(value1, value2, ((OperatorToken) token).getOperator());
+                double result = applyOperation(value1, value2, (operatorToken.getOperator()));
                 stack.push(result);
             } else {
-                if (token instanceof VariableToken) {
-                    stack.push(variables.get(((VariableToken) token).getVarName()));
+                if (token instanceof VariableToken variableToken) {
+                    Double value = variables.get(variableToken.getVarName());
+                    if (value == null) {
+                        throw new RuntimeException("Undefined variable: " + variableToken.getVarName());
+                    }
+                    stack.push(value);
                 }
             }
         }

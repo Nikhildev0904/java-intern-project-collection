@@ -18,8 +18,8 @@ public class ExpParser {
     public Set<String> extractVariables() {
         Set<String> variables = new HashSet<>();
         for (Token token : parsedExpression) {
-            if (token instanceof VariableToken) {
-                variables.add(((VariableToken) token).getVarName());
+            if (token instanceof VariableToken variableToken) {
+                variables.add(variableToken.getVarName());
             }
         }
         return variables;
@@ -79,18 +79,18 @@ public class ExpParser {
         for (Token token : tokenizedExpression) {
             if (token instanceof OperandToken) {
                 postfixExpression.add(token);
-            } else if ((token instanceof OperatorToken) && (((OperatorToken) token).getOperator() == '(')) {
+            } else if ((token instanceof OperatorToken operatorToken) && ((operatorToken.getOperator() == '('))) {
                 stack.push(token);
-            } else if (token instanceof OperatorToken && (((OperatorToken) token).getOperator() == ')')) {
-                while (!stack.isEmpty() && stack.peek() instanceof OperatorToken &&
-                        !(((OperatorToken) stack.peek()).getOperator() == '(')) {
+            } else if ((token instanceof OperatorToken operatorToken) && (operatorToken.getOperator() == ')')) {
+                while (!stack.isEmpty() && (stack.peek() instanceof OperatorToken operatorToken1) &&
+                        !(operatorToken1.getOperator() == '(')) {
                     postfixExpression.add(stack.pop());
                 }
                 stack.pop();
-            } else if (token instanceof OperatorToken) {
-                while (!stack.isEmpty() && stack.peek() instanceof OperatorToken &&
-                        getPrecedence(((OperatorToken) stack.peek()).getOperator()) >=
-                                getPrecedence((char) ((OperatorToken) token).getOperator())) {
+            } else if (token instanceof OperatorToken operatorToken) {
+                while (!stack.isEmpty() && (stack.peek() instanceof OperatorToken operatorToken1) &&
+                        getPrecedence(operatorToken1.getOperator()) >=
+                                getPrecedence(operatorToken.getOperator())) {
                     postfixExpression.add(stack.pop());
                 }
                 stack.push(token);
