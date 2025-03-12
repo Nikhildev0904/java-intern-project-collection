@@ -20,6 +20,5 @@ public class IteratorExample {
         while (batchedIterator.hasNext()) {
             System.out.print(batchedIterator.next() + " ");
         }
-
     }
 }
