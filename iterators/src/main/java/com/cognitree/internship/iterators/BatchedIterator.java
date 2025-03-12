@@ -1,23 +1,19 @@
 package com.cognitree.internship.iterators;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class BatchedIterator<T> implements Iterator<List<T>> {
-    private final List<T> list;
+public class BatchedIterator<T> implements Iterator<Collection<T>> {
+    private final Iterator<T> iterator;
     private final int batchSize;
-    private int currentIndex = 0;
 
-    public BatchedIterator(int batchSize, List<T> list) {
+    public BatchedIterator(Collection<T> collection, int batchSize) {
+        this.iterator = collection.iterator();
         this.batchSize = batchSize;
-        this.list = list;
     }
 
     @Override
     public boolean hasNext() {
-        return currentIndex < list.size();
+        return iterator.hasNext();
     }
 
     @Override
@@ -25,11 +21,12 @@ public class BatchedIterator<T> implements Iterator<List<T>> {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        List<T> subList = new ArrayList<>();
-        int endIndex = currentIndex + batchSize;
-        for (; currentIndex < endIndex && currentIndex < list.size(); currentIndex++) {
-            subList.add(list.get(currentIndex));
+        List<T> batch = new ArrayList<>(batchSize);
+        int count = 0;
+        while (iterator.hasNext() && count < batchSize) {
+            batch.add(iterator.next());
+            count++;
         }
-        return subList;
+        return batch;
     }
 }

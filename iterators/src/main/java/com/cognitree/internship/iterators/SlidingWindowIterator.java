@@ -1,18 +1,15 @@
 package com.cognitree.internship.iterators;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-public class SlidingWindowIterator<T> implements Iterator<List<T>> {
+public class SlidingWindowIterator<T> implements Iterator<Collection<T>> {
     private final List<T> list;
     private final int windowSize;
     private int currentIndex = 0;
 
-    public SlidingWindowIterator(int windowSize, List<T> list) {
+    public SlidingWindowIterator(Collection<T> collection, int windowSize) {
+        this.list = new ArrayList<>(collection);
         this.windowSize = windowSize;
-        this.list = list;
     }
 
     @Override
@@ -25,12 +22,12 @@ public class SlidingWindowIterator<T> implements Iterator<List<T>> {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        List<T> subList = new ArrayList<>();
+        List<T> window = new ArrayList<>();
         for (int i = currentIndex; i < currentIndex + windowSize && i < list.size(); i++) {
-            subList.add(list.get(i));
+            window.add(list.get(i));
         }
         currentIndex++;
-        return subList;
+        return window;
     }
 
 }
