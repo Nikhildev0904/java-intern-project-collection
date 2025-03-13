@@ -1,6 +1,6 @@
 package com.cognitree.internship.iterators;
 
-import java.util.Iterator;
+import java.util.*;
 
 public class CircularQueue<T> implements Iterable<T> {
     private final T[] array;
@@ -13,16 +13,12 @@ public class CircularQueue<T> implements Iterable<T> {
         this.length = 0;
     }
 
-    public final T slide(T element) {
-        T last = null;
+    public final void slide(T element) {
         index = (index + 1) % array.length;
         if (length != array.length) {
             length++;
-        } else {
-            last = array[index];
         }
         array[index] = element;
-        return last;
     }
 
     public int getLength() {
@@ -48,5 +44,14 @@ public class CircularQueue<T> implements Iterable<T> {
                 return value;
             }
         };
+    }
+
+    public List<T> getWindowElements() {
+        List<T> result = new ArrayList<>(length);
+        int start = (index + 1 - length + array.length) % array.length;
+        for (int i = 0; i < length; i++) {
+            result.add(array[(start + i) % array.length]);
+        }
+        return result;
     }
 }

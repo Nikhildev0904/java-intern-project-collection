@@ -19,7 +19,7 @@ public class BatchedIterator<T> implements Iterator<List<T>> {
     @Override
     public List<T> next() {
         if (!hasNext()) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("No elements left");
         }
         List<T> batch = new ArrayList<>(batchSize);
         int count = 0;

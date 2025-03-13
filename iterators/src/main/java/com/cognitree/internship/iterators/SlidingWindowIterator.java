@@ -6,7 +6,7 @@ public class SlidingWindowIterator<T> implements Iterator<List<T>> {
     private final Iterator<T> iterator;
     private final CircularQueue<T> window;
     private final int windowSize;
-    private boolean filled = false;
+    private boolean isWindowFilled = false;
 
     public SlidingWindowIterator(Iterable<T> iterable, int windowSize) {
         this.iterator = iterable.iterator();
@@ -16,7 +16,7 @@ public class SlidingWindowIterator<T> implements Iterator<List<T>> {
 
     @Override
     public boolean hasNext() {
-        return filled || iterator.hasNext();
+        return isWindowFilled || iterator.hasNext();
     }
 
     @Override
@@ -24,24 +24,19 @@ public class SlidingWindowIterator<T> implements Iterator<List<T>> {
         if (!hasNext()) {
             throw new NoSuchElementException("No elements left");
         }
-        while (!filled && iterator.hasNext()) {
+        while (window.getLength() < windowSize && iterator.hasNext()) {
             window.slide(iterator.next());
-            if (window.getLength() == windowSize) {
-                filled = true;
-            }
         }
-        if (!filled && hasNext()) {
+        isWindowFilled = window.getLength() == windowSize;
+        if (!isWindowFilled) {
             throw new NoSuchElementException("No more windows available");
         }
-        List<T> list = new ArrayList<>();
-        for (T item : window) {
-            list.add(item);
-        }
+        List<T> batch = window.getWindowElements();
         if (iterator.hasNext()) {
             window.slide(iterator.next());
         } else {
-            filled = false;
+            isWindowFilled = false;
         }
-        return list;
+        return batch;
     }
 }
