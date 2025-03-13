@@ -2,32 +2,46 @@ package com.cognitree.internship.iterators;
 
 import java.util.*;
 
-public class SlidingWindowIterator<T> implements Iterator<Collection<T>> {
-    private final List<T> list;
+public class SlidingWindowIterator<T> implements Iterator<List<T>> {
+    private final Iterator<T> iterator;
+    private final CircularQueue<T> window;
     private final int windowSize;
-    private int currentIndex = 0;
+    private boolean filled = false;
 
-    public SlidingWindowIterator(Collection<T> collection, int windowSize) {
-        this.list = new ArrayList<>(collection);
+    public SlidingWindowIterator(Iterable<T> iterable, int windowSize) {
+        this.iterator = iterable.iterator();
+        this.window = new CircularQueue<>(windowSize);
         this.windowSize = windowSize;
     }
 
     @Override
     public boolean hasNext() {
-        return currentIndex <= list.size() - windowSize;
+        return filled || iterator.hasNext();
     }
 
     @Override
     public List<T> next() {
         if (!hasNext()) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("No elements left");
         }
-        List<T> window = new ArrayList<>();
-        for (int i = currentIndex; i < currentIndex + windowSize && i < list.size(); i++) {
-            window.add(list.get(i));
+        while (!filled && iterator.hasNext()) {
+            window.slide(iterator.next());
+            if (window.getLength() == windowSize) {
+                filled = true;
+            }
         }
-        currentIndex++;
-        return window;
+        if (!filled && hasNext()) {
+            throw new NoSuchElementException("No more windows available");
+        }
+        List<T> list = new ArrayList<>();
+        for (T item : window) {
+            list.add(item);
+        }
+        if (iterator.hasNext()) {
+            window.slide(iterator.next());
+        } else {
+            filled = false;
+        }
+        return list;
     }
-
 }

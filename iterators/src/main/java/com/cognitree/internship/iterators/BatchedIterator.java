@@ -2,12 +2,12 @@ package com.cognitree.internship.iterators;
 
 import java.util.*;
 
-public class BatchedIterator<T> implements Iterator<Collection<T>> {
+public class BatchedIterator<T> implements Iterator<List<T>> {
     private final Iterator<T> iterator;
     private final int batchSize;
 
-    public BatchedIterator(Collection<T> collection, int batchSize) {
-        this.iterator = collection.iterator();
+    public BatchedIterator(Iterable<T> iterable, int batchSize) {
+        this.iterator = iterable.iterator();
         this.batchSize = batchSize;
     }
 
