@@ -1,11 +1,13 @@
-package com.cognitree.internship.two_stacks;
+package com.cognitree.internship.twostacks.approach1;
 
-public class TwoStack<T> {
+import java.util.NoSuchElementException;
+
+public class TwoStacks<T> {
     private final LeftStack leftStack;
     private final RightStack rightStack;
     private final T[] array;
 
-    public TwoStack(int size) {
+    public TwoStacks(int size) {
         array = (T[]) new Object[size];
         leftStack = new LeftStack();
         rightStack = new RightStack();
@@ -24,7 +26,7 @@ public class TwoStack<T> {
     }
 
     public int leftSize() {
-        return leftStack.top1 + 1;
+        return leftStack.leftTop + 1;
     }
 
     public boolean isLeftEmpty() {
@@ -48,7 +50,7 @@ public class TwoStack<T> {
     }
 
     public int rightSize() {
-        return array.length - rightStack.top2;
+        return array.length - rightStack.rightTop;
     }
 
     public boolean isRightEmpty() {
@@ -60,76 +62,76 @@ public class TwoStack<T> {
     }
 
     private class LeftStack {
-        private int top1 = -1;
+        private int leftTop = -1;
 
         private void push(T element) {
             if (isFull()) {
-                throw new RuntimeException("Cannot Insert, array is full");
+                throw new IllegalStateException("Left stack overflow");
             }
-            top1++;
-            array[top1] = element;
+            leftTop++;
+            array[leftTop] = element;
         }
 
         private T pop() {
             if (isEmpty()) {
-                throw new RuntimeException("Cannot pop, Stack is empty");
+                throw new NoSuchElementException("Left stack underflow");
             }
-            T last = array[top1];
-            array[top1] = null;
-            top1--;
+            T last = array[leftTop];
+            array[leftTop] = null;
+            leftTop--;
             return last;
         }
 
         private T peek() {
             if (isEmpty()) {
-                throw new RuntimeException("Cannot peek, Stack is empty");
+                throw new NoSuchElementException("Left stack is empty");
             }
-            return array[top1];
+            return array[leftTop];
         }
 
         private boolean isFull() {
-            return top1 + 1 == rightStack.top2;
+            return leftTop + 1 == rightStack.rightTop;
         }
 
         private boolean isEmpty() {
-            return top1 == -1;
+            return leftTop == -1;
         }
     }
 
     private class RightStack {
-        private int top2 = array.length;
+        private int rightTop = array.length;
 
         private void push(T element) {
             if (isFull()) {
-                throw new RuntimeException("Cannot Insert, array is full");
+                throw new IllegalStateException("Right stack overflow");
             }
-            top2--;
-            array[top2] = element;
+            rightTop--;
+            array[rightTop] = element;
         }
 
         private T pop() {
             if (isEmpty()) {
-                throw new RuntimeException("Cannot delete, Stack is empty");
+                throw new NoSuchElementException("Right stack underflow");
             }
-            T last = array[top2];
-            array[top2] = null;
-            top2++;
+            T last = array[rightTop];
+            array[rightTop] = null;
+            rightTop++;
             return last;
         }
 
         private T peek() {
             if (isEmpty()) {
-                throw new RuntimeException("Cannot peek, Stack is empty");
+                throw new NoSuchElementException("Right stack is empty");
             }
-            return array[top2];
+            return array[rightTop];
         }
 
         private boolean isFull() {
-            return leftStack.top1 + 1 == top2;
+            return leftStack.leftTop + 1 == rightTop;
         }
 
         private boolean isEmpty() {
-            return top2 == array.length;
+            return rightTop == array.length;
         }
     }
 }
