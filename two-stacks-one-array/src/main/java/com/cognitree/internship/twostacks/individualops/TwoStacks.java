@@ -30,15 +30,15 @@ public class TwoStacks<T> {
         return leftStack.leftTop + 1;
     }
 
-    public Iterator<T> getLeftIterator() {
+    public Iterator<T> getIteratorLeft() {
         return leftStack.iterator();
     }
 
-    public boolean isLeftEmpty() {
+    public boolean isEmptyLeft() {
         return leftStack.isEmpty();
     }
 
-    public boolean isLeftFull() {
+    public boolean isFullLeft() {
         return leftStack.isFull();
     }
 
@@ -58,15 +58,15 @@ public class TwoStacks<T> {
         return array.length - rightStack.rightTop;
     }
 
-    public Iterator<T> getRightIterator() {
+    public Iterator<T> getIteratorRight() {
         return rightStack.iterator();
     }
 
-    public boolean isRightEmpty() {
+    public boolean isEmptyRight() {
         return rightStack.isEmpty();
     }
 
-    public boolean isRightFull() {
+    public boolean isFullRight() {
         return rightStack.isFull();
     }
 

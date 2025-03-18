@@ -49,12 +49,12 @@ public class TwoStacks<T> {
         }
     }
 
-    public Iterator<T> getLeftIterator() {
-        return leftStack.iterator();
-    }
-
-    public Iterator<T> getRightIterator() {
-        return rightStack.iterator();
+    public Iterator<T> getIterator(StackType type) {
+        if (type == StackType.LEFT) {
+            return leftStack.iterator();
+        } else {
+            return rightStack.iterator();
+        }
     }
 
     public boolean isEmpty(StackType type) {

@@ -18,12 +18,12 @@ public class TwoStacks<T> {
         return leftStack;
     }
 
-    public Stack<T> getRightStack() {
-        return rightStack;
-    }
-
     public Iterator<T> getLeftIterator() {
         return leftStack.iterator();
+    }
+
+    public Stack<T> getRightStack() {
+        return rightStack;
     }
 
     public Iterator<T> getRightIterator() {
