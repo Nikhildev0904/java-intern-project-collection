@@ -1,5 +1,6 @@
-package com.cognitree.internship.twostacks.approach3;
+package com.cognitree.internship.twostacks.unified_stack;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class TwoStacks<T> {
@@ -19,6 +20,14 @@ public class TwoStacks<T> {
 
     public Stack<T> getRightStack() {
         return rightStack;
+    }
+
+    public Iterator<T> getLeftIterator() {
+        return leftStack.iterator();
+    }
+
+    public Iterator<T> getRightIterator() {
+        return rightStack.iterator();
     }
 
     private class LeftStack implements Stack<T> {
@@ -66,6 +75,26 @@ public class TwoStacks<T> {
         public boolean isEmpty() {
             return leftTop == -1;
         }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private int current = leftTop;
+
+                @Override
+                public boolean hasNext() {
+                    return current >= 0;
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("Left stack is empty");
+                    }
+                    return array[current--];
+                }
+            };
+        }
     }
 
     private class RightStack implements Stack<T> {
@@ -112,6 +141,26 @@ public class TwoStacks<T> {
         @Override
         public boolean isEmpty() {
             return rightTop == array.length;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private int current = rightTop;
+
+                @Override
+                public boolean hasNext() {
+                    return current < array.length;
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("Right stack is empty");
+                    }
+                    return array[current++];
+                }
+            };
         }
     }
 }

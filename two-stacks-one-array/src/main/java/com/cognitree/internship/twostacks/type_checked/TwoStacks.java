@@ -1,11 +1,15 @@
-package com.cognitree.internship.twostacks.approach2;
+package com.cognitree.internship.twostacks.type_checked;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 
 public class TwoStacks<T> {
     private final LeftStack leftStack;
     private final RightStack rightStack;
     private final T[] array;
+
+    public enum StackType {LEFT, RIGHT}
 
     public TwoStacks(int size) {
         array = (T[]) new Object[size];
@@ -13,55 +17,64 @@ public class TwoStacks<T> {
         rightStack = new RightStack();
     }
 
-    public void push(T element, String type) {
-        if (type.equals("left")) {
+    public void push(T element, StackType type) {
+        if (type == StackType.LEFT) {
             leftStack.push(element);
         } else {
             rightStack.push(element);
         }
     }
 
-    public T pop(String type) {
-        if (type.equals("left")) {
+    public T pop(StackType type) {
+        if (type == StackType.LEFT) {
             return leftStack.pop();
         } else {
             return rightStack.pop();
         }
     }
 
-    public T peek(String type) {
-        if (type.equals("left")) {
+    public T peek(StackType type) {
+        if (type == StackType.LEFT) {
             return leftStack.peek();
         } else {
             return rightStack.peek();
         }
     }
 
-    public int size(String type) {
-        if (type.equals("left")) {
+    public int size(StackType type) {
+        if (type == StackType.LEFT) {
             return leftStack.leftTop + 1;
         } else {
             return array.length - rightStack.rightTop;
         }
     }
 
-    public boolean isEmpty(String type) {
-        if (type.equals("left")) {
+    public Iterator<T> getLeftIterator() {
+        return leftStack.iterator();
+    }
+
+    public Iterator<T> getRightIterator() {
+        return rightStack.iterator();
+    }
+
+    public boolean isEmpty(StackType type) {
+        if (type == StackType.LEFT) {
             return leftStack.isEmpty();
         } else {
             return rightStack.isEmpty();
         }
     }
 
-    public boolean isFull(String type) {
-        if (type.equals("left")) {
+    public boolean isFull(StackType type) {
+        if (type == StackType.LEFT) {
             return leftStack.isFull();
         } else {
             return rightStack.isFull();
         }
     }
 
-    private class LeftStack {
+
+    private class LeftStack implements Iterable<T>{
         private int leftTop = -1;
 
         private void push(T element) {
@@ -96,9 +109,29 @@ public class TwoStacks<T> {
         private boolean isEmpty() {
             return leftTop == -1;
         }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private int current = leftTop;
+
+                @Override
+                public boolean hasNext() {
+                    return current >= 0;
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("Left stack is empty");
+                    }
+                    return array[current--];
+                }
+            };
+        }
     }
 
-    private class RightStack {
+    private class RightStack implements Iterable<T> {
         private int rightTop = array.length;
 
         private void push(T element) {
@@ -132,6 +165,26 @@ public class TwoStacks<T> {
 
         private boolean isEmpty() {
             return rightTop == array.length;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private int current = rightTop;
+
+                @Override
+                public boolean hasNext() {
+                    return current < array.length;
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("Right stack is empty");
+                    }
+                    return array[current++];
+                }
+            };
         }
     }
 }

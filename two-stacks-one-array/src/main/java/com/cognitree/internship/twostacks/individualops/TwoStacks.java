@@ -1,5 +1,6 @@
-package com.cognitree.internship.twostacks.approach1;
+package com.cognitree.internship.twostacks.individualops;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class TwoStacks<T> {
@@ -25,8 +26,12 @@ public class TwoStacks<T> {
         return leftStack.peek();
     }
 
-    public int leftSize() {
+    public int sizeLeft() {
         return leftStack.leftTop + 1;
+    }
+
+    public Iterator<T> getLeftIterator() {
+        return leftStack.iterator();
     }
 
     public boolean isLeftEmpty() {
@@ -49,8 +54,12 @@ public class TwoStacks<T> {
         return rightStack.peek();
     }
 
-    public int rightSize() {
+    public int sizeRight() {
         return array.length - rightStack.rightTop;
+    }
+
+    public Iterator<T> getRightIterator() {
+        return rightStack.iterator();
     }
 
     public boolean isRightEmpty() {
@@ -61,7 +70,7 @@ public class TwoStacks<T> {
         return rightStack.isFull();
     }
 
-    private class LeftStack {
+    private class LeftStack implements Iterable<T>{
         private int leftTop = -1;
 
         private void push(T element) {
@@ -96,9 +105,29 @@ public class TwoStacks<T> {
         private boolean isEmpty() {
             return leftTop == -1;
         }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private int current = leftTop;
+
+                @Override
+                public boolean hasNext() {
+                    return current >= 0;
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("Left stack is empty");
+                    }
+                    return array[current--];
+                }
+            };
+        }
     }
 
-    private class RightStack {
+    private class RightStack implements Iterable<T>{
         private int rightTop = array.length;
 
         private void push(T element) {
@@ -132,6 +161,26 @@ public class TwoStacks<T> {
 
         private boolean isEmpty() {
             return rightTop == array.length;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private int current = rightTop;
+
+                @Override
+                public boolean hasNext() {
+                    return current < array.length;
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("Right stack is empty");
+                    }
+                    return array[current++];
+                }
+            };
         }
     }
 }

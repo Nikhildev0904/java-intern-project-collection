@@ -1,4 +1,4 @@
-package com.cognitree.internship.twostacks.approach3;
+package com.cognitree.internship.twostacks.unified_stack;
 
 public class TwoStackExample {
 
@@ -13,14 +13,12 @@ public class TwoStackExample {
         left.push(10);
         System.out.println(left.size());
         System.out.println(right.size());
-        while (!left.isEmpty()) {
-            System.out.print(left.peek() + " ");
-            left.pop();
+        for (Integer i : left) {
+            System.out.print(i + " ");
         }
         System.out.println();
-        while (!right.isEmpty()) {
-            System.out.print(right.peek() + " ");
-            right.pop();
+        for (Integer i : right) {
+            System.out.print(i + " ");
         }
     }
 }
