@@ -70,7 +70,7 @@ public class TwoStacks<T> {
         return rightStack.isFull();
     }
 
-    private class LeftStack implements Iterable<T>{
+    private class LeftStack implements Iterable<T> {
         private int leftTop = -1;
 
         private void push(T element) {
@@ -127,7 +127,7 @@ public class TwoStacks<T> {
         }
     }
 
-    private class RightStack implements Iterable<T>{
+    private class RightStack implements Iterable<T> {
         private int rightTop = array.length;
 
         private void push(T element) {

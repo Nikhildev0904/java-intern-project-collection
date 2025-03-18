@@ -74,7 +74,7 @@ public class TwoStacks<T> {
     }
 
 
-    private class LeftStack implements Iterable<T>{
+    private class LeftStack implements Iterable<T> {
         private int leftTop = -1;
 
         private void push(T element) {

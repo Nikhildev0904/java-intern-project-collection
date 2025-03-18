@@ -14,13 +14,13 @@ public class TwoStackExample {
         System.out.println(twoStacks.sizeLeft());
         System.out.println(twoStacks.sizeRight());
         Iterator<Integer> leftIterator = twoStacks.getLeftIterator();
-        while (leftIterator.hasNext()){
-            System.out.print(leftIterator.next()+" ");
+        while (leftIterator.hasNext()) {
+            System.out.print(leftIterator.next() + " ");
         }
         System.out.println();
         Iterator<Integer> rightIterator = twoStacks.getRightIterator();
-        while (rightIterator.hasNext()){
-            System.out.print(rightIterator.next()+" ");
+        while (rightIterator.hasNext()) {
+            System.out.print(rightIterator.next() + " ");
         }
     }
 }
