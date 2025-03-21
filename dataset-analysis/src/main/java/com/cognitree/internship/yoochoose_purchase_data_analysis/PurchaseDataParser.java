@@ -1,4 +1,4 @@
-package com.cognitree.internship.data_analysis;
+package com.cognitree.internship.yoochoose_purchase_data_analysis;
 
 import java.io.*;
 import java.util.HashMap;
@@ -6,14 +6,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-//SessionID, Timestamp, ItemID, Price, Quantity
 
-public class DataParser {
+public class PurchaseDataParser {
     private final Map<Integer, Integer> purchaseCountMap;
     private final Map<Integer, Set<Integer>> distinctSessionMap;
     private final Map<Integer, Integer> totalQuantityMap;
 
-    public DataParser(String path) {
+    public PurchaseDataParser(String path) {
         purchaseCountMap = new HashMap<>();
         distinctSessionMap = new HashMap<>();
         totalQuantityMap = new HashMap<>();
