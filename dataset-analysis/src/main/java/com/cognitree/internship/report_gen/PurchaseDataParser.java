@@ -1,4 +1,4 @@
-package com.cognitree.internship.analytics.purchase;
+package com.cognitree.internship.report_gen;
 
 import java.io.*;
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 public class PurchaseDataParser {
     private final List<BuyRecord> records;
 
-    public PurchaseDataParser(String path) {
+    public PurchaseDataParser(String path) throws IOException {
         this.records = new ArrayList<>();
         parseRawData(path);
     }
@@ -15,7 +15,7 @@ public class PurchaseDataParser {
         return records;
     }
 
-    private void parseRawData(String path) {
+    private void parseRawData(String path) throws IOException {
         try (FileInputStream fileInputStream = new FileInputStream(path);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream))) {
             String line;
@@ -29,9 +29,6 @@ public class PurchaseDataParser {
                 BuyRecord record = new BuyRecord(sessionID, timeStamp, itemID, price, quantity);
                 records.add(record);
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Error parsing file: ", e);
         }
     }
-
 }

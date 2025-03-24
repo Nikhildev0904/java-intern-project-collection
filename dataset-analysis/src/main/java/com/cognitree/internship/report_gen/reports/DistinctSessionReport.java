@@ -1,6 +1,6 @@
-package com.cognitree.internship.analytics.purchase.reports;
+package com.cognitree.internship.report_gen.reports;
 
-import com.cognitree.internship.analytics.purchase.BuyRecord;
+import com.cognitree.internship.report_gen.BuyRecord;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -12,14 +12,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class DistinctSessionReport implements Report {
-    private final Map<Integer, Set<Integer>> distinctSessionMap;
-
-    public DistinctSessionReport() {
-        distinctSessionMap = new HashMap<>();
-    }
+    private final Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
 
     @Override
-    public void generateReport(String outputDir) {
+    public void generateReport(String outputDir) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputDir + "/report_distinct_sessions_count.csv");
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
             Map<Integer, Set<Integer>> distinctSessionMap = this.distinctSessionMap;
@@ -30,8 +26,6 @@ public class DistinctSessionReport implements Report {
                 bufferedWriter.newLine();
             }
             System.out.println("Report Generated Successfully");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

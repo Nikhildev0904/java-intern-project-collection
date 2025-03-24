@@ -1,4 +1,4 @@
-package com.cognitree.internship.analytics.purchase;
+package com.cognitree.internship.report_gen;
 
 import java.io.File;
 
@@ -15,13 +15,21 @@ public class PurchaseAnalyzer {
             validateInputFile(inputFile);
             validateOutputDir(outputDir);
             ReportManager reportManager = new ReportManager(inputFile, outputDir);
-            reportManager.generateAllReports();
-            if (args.length == 3) {
-                String reportName = args[2];
-                reportManager.generateReport(reportName);
+            if (args.length == 2) {
+                reportManager.generateAllReports();
+            } else {
+
+                int i = 2;
+                while (i < args.length) {
+                    String reportName = args[i];
+                    reportManager.generateReport(reportName);
+                    i++;
+                }
             }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("Unexpected error during purchase data analysis: " + e.getMessage()); // Catches any other unknown errors
         }
     }
 

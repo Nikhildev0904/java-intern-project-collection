@@ -1,6 +1,6 @@
-package com.cognitree.internship.analytics.purchase.reports;
+package com.cognitree.internship.report_gen.reports;
 
-import com.cognitree.internship.analytics.purchase.BuyRecord;
+import com.cognitree.internship.report_gen.BuyRecord;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -10,14 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PurchaseCountReport implements Report {
-    private final Map<Integer, Integer> purchaseCountMap;
-
-    public PurchaseCountReport() {
-        purchaseCountMap = new HashMap<>();
-    }
+    private final Map<Integer, Integer> purchaseCountMap = new HashMap<>();
 
     @Override
-    public void generateReport(String outputDir) {
+    public void generateReport(String outputDir) throws IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputDir + "/report_purchase_count.csv");
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
             Map<Integer, Integer> purchaseCountMap = this.purchaseCountMap;
@@ -28,8 +24,6 @@ public class PurchaseCountReport implements Report {
                 bufferedWriter.newLine();
             }
             System.out.println("Report Generated Successfully");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

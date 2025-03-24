@@ -1,7 +1,8 @@
-package com.cognitree.internship.analytics.purchase;
+package com.cognitree.internship.report_gen;
 
-import com.cognitree.internship.analytics.purchase.reports.Report;
+import com.cognitree.internship.report_gen.reports.Report;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ReportManager {
@@ -9,23 +10,23 @@ public class ReportManager {
     private final List<BuyRecord> records;
     private final String outputDir;
 
-    public ReportManager(String inputFile, String outputDir) {
+    public ReportManager(String inputFile, String outputDir) throws IOException {
         PurchaseDataParser dataParser = new PurchaseDataParser(inputFile);
         this.records = dataParser.getRecords();
         this.outputDir = outputDir;
         loadReports();
     }
 
-    public void generateAllReports() {
-        initializeReport(null);
+    public void generateAllReports() throws IOException {
+        initializeReport("");
         for (Report report : reports.values()) {
             report.generateReport(outputDir);
         }
     }
 
-    public void generateReport(String reportName) {
+    public void generateReport(String reportName) throws IOException {
+        initializeReport(reportName);
         Report report = reports.get(reportName);
-        initializeReport(report);
         report.generateReport(outputDir);
     }
 
@@ -36,8 +37,9 @@ public class ReportManager {
         }
     }
 
-    private void initializeReport(Report report) {
-        if (report == null) {
+    private void initializeReport(String reportName) {
+        Report report = reports.get(reportName);
+        if (reportName.isEmpty()) {
             for (Report eachReport : reports.values()) {
                 for (BuyRecord record : records) {
                     eachReport.addRecord(record);
