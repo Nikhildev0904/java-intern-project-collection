@@ -1,18 +1,21 @@
-package com.cognitree.internship.yoochoose_purchase_data_analysis.reports;
+package com.cognitree.internship.analytics.purchase.reports;
 
-import com.cognitree.internship.yoochoose_purchase_data_analysis.PurchaseDataParser;
+import com.cognitree.internship.analytics.purchase.BuyRecord;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class DistinctSessionReport implements Report {
-    private Map<Integer, Set<Integer>> distinctSessionMap;
+    private final Map<Integer, Set<Integer>> distinctSessionMap;
 
     public DistinctSessionReport() {
+        distinctSessionMap = new HashMap<>();
     }
 
     @Override
@@ -22,9 +25,8 @@ public class DistinctSessionReport implements Report {
             Map<Integer, Set<Integer>> distinctSessionMap = this.distinctSessionMap;
             bufferedWriter.write("ItemId,DistinctSessionCount");
             bufferedWriter.newLine();
-            for (int key : distinctSessionMap.keySet()) {
-                String line = key + "," + distinctSessionMap.get(key).size();
-                bufferedWriter.write(line);
+            for (Map.Entry<Integer, Set<Integer>> entry : distinctSessionMap.entrySet()) {
+                bufferedWriter.write(entry.getKey() + "," + entry.getValue().size());
                 bufferedWriter.newLine();
             }
             System.out.println("Report Generated Successfully");
@@ -34,7 +36,17 @@ public class DistinctSessionReport implements Report {
     }
 
     @Override
-    public void init(PurchaseDataParser dataParser) {
-        this.distinctSessionMap = dataParser.getDistinctSessionMap();
+    public void addRecord(BuyRecord record) {
+        int itemID = record.itemID();
+        int sessionID = record.sessionID();
+        if (!distinctSessionMap.containsKey(itemID)) {
+            distinctSessionMap.put(itemID, new HashSet<>());
+        }
+        distinctSessionMap.get(itemID).add(sessionID);
+    }
+
+    @Override
+    public String getName() {
+        return "DistinctSessionReport";
     }
 }

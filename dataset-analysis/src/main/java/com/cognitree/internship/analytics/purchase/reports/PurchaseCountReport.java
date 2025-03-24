@@ -1,17 +1,19 @@
-package com.cognitree.internship.yoochoose_purchase_data_analysis.reports;
+package com.cognitree.internship.analytics.purchase.reports;
 
-import com.cognitree.internship.yoochoose_purchase_data_analysis.PurchaseDataParser;
+import com.cognitree.internship.analytics.purchase.BuyRecord;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 public class PurchaseCountReport implements Report {
-    private Map<Integer, Integer> purchaseCountMap;
+    private final Map<Integer, Integer> purchaseCountMap;
 
     public PurchaseCountReport() {
+        purchaseCountMap = new HashMap<>();
     }
 
     @Override
@@ -21,9 +23,8 @@ public class PurchaseCountReport implements Report {
             Map<Integer, Integer> purchaseCountMap = this.purchaseCountMap;
             bufferedWriter.write("ItemId,PurchaseEventCount");
             bufferedWriter.newLine();
-            for (int key : purchaseCountMap.keySet()) {
-                String line = key + "," + purchaseCountMap.get(key);
-                bufferedWriter.write(line);
+            for (Map.Entry<Integer, Integer> entry : purchaseCountMap.entrySet()) {
+                bufferedWriter.write(entry.getKey() + "," + entry.getValue());
                 bufferedWriter.newLine();
             }
             System.out.println("Report Generated Successfully");
@@ -33,7 +34,13 @@ public class PurchaseCountReport implements Report {
     }
 
     @Override
-    public void init(PurchaseDataParser dataParser) {
-        this.purchaseCountMap = dataParser.getPurchaseCountMap();
+    public void addRecord(BuyRecord record) {
+        int itemID = record.itemID();
+        purchaseCountMap.put(itemID, purchaseCountMap.getOrDefault(itemID, 0) + 1);
+    }
+
+    @Override
+    public String getName() {
+        return "PurchaseCountReport";
     }
 }
