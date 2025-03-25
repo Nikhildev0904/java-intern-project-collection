@@ -3,6 +3,8 @@ package com.cognitree.internship.report_gen.reports;
 import com.cognitree.internship.report_gen.BuyRecord;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +14,9 @@ public class AvgQuantityPerDayReport implements Report {
 
     @Override
     public void generateReport(String outputDir) throws IOException {
+        Path outputPath = Paths.get(outputDir, "report_avg_quantity_per_day.csv");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(outputDir + "/report_day_of_week_avg_quantity.csv")))) {
+                new FileOutputStream(outputPath.toFile())))) {
             writer.write("DayOfWeek,ItemID,AvgQuantity");
             writer.newLine();
             for (Map.Entry<DayOfWeek, Map<Integer, Pair>> dayEntry : quantityPerDayMap.entrySet()) {
@@ -49,7 +52,7 @@ public class AvgQuantityPerDayReport implements Report {
 
     @Override
     public String getName() {
-        return "AvgQuantityPerDayReport";
+        return "Average_Quantity_Per_Day";
     }
 
     private static class Pair {

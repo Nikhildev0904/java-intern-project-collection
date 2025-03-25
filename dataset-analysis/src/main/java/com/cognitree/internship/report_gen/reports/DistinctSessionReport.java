@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,7 +18,8 @@ public class DistinctSessionReport implements Report {
 
     @Override
     public void generateReport(String outputDir) throws IOException {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(outputDir + "/report_distinct_sessions_count.csv");
+        Path outputPath = Paths.get(outputDir, "report_distinct_sessions_count.csv");
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
             Map<Integer, Set<Integer>> distinctSessionMap = this.distinctSessionMap;
             bufferedWriter.write("ItemId,DistinctSessionCount");
@@ -41,6 +44,6 @@ public class DistinctSessionReport implements Report {
 
     @Override
     public String getName() {
-        return "DistinctSessionReport";
+        return "Distinct_Session_Count";
     }
 }

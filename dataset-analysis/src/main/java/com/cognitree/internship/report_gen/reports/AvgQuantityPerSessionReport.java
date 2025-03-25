@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,7 +19,8 @@ public class AvgQuantityPerSessionReport implements Report {
 
     @Override
     public void generateReport(String outputDir) throws IOException {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(outputDir + "/report_average_quantity.csv");
+        Path outputPath = Paths.get(outputDir, "report_average_quantity_per_session.csv");
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
             Map<Integer, Integer> totalQuantityMap = this.totalQuantityMap;
             Map<Integer, Set<Integer>> distinctSessionMap = this.distinctSessionMap;
@@ -47,6 +50,6 @@ public class AvgQuantityPerSessionReport implements Report {
 
     @Override
     public String getName() {
-        return "AvgQuantityPerSessionReport";
+        return "Average_Quantity_Per_Session";
     }
 }

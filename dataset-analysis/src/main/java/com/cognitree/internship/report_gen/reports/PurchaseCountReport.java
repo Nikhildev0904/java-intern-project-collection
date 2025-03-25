@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,8 @@ public class PurchaseCountReport implements Report {
 
     @Override
     public void generateReport(String outputDir) throws IOException {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(outputDir + "/report_purchase_count.csv");
+        Path outputPath = Paths.get(outputDir, "report_purchase_count.csv");
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
             Map<Integer, Integer> purchaseCountMap = this.purchaseCountMap;
             bufferedWriter.write("ItemId,PurchaseEventCount");
@@ -35,6 +38,6 @@ public class PurchaseCountReport implements Report {
 
     @Override
     public String getName() {
-        return "PurchaseCountReport";
+        return "Purchase_Count";
     }
 }

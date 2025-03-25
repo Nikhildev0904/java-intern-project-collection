@@ -3,6 +3,8 @@ package com.cognitree.internship.report_gen.reports;
 import com.cognitree.internship.report_gen.BuyRecord;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +17,9 @@ public class HourlyActivityReport implements Report {
 
     @Override
     public void generateReport(String outputDir) throws IOException {
+        Path outputPath = Paths.get(outputDir, "report_hourly_activity.csv");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(outputDir + "/report_hourly_activity.csv")))) {
+                new FileOutputStream(outputPath.toFile())))) {
             writer.write("Hour,AvgActiveSessions,AvgUniqueItems");
             writer.newLine();
             for (int hour = 0; hour < 24; hour++) {
@@ -62,6 +65,6 @@ public class HourlyActivityReport implements Report {
 
     @Override
     public String getName() {
-        return "HourlyActivityReport";
+        return "Hourly_Average_Sessions_And_Items";
     }
 }

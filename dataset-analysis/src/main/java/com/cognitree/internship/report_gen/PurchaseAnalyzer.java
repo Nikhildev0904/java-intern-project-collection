@@ -8,33 +8,38 @@ import java.util.ServiceLoader;
 public class PurchaseAnalyzer {
 
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.out.println("Use Command line arguments: java PurchaseAnalyzer <Input File> <Output Directory> [ReportName]");
-            System.out.println("All Available Reports:");
-            listAvailableReports();
+        if (args.length < 3) {
+            System.out.println("Use: java PurchaseAnalyzer <Input File> <Output Directory> <Command> [ReportName...]");
+            System.out.println("Commands:");
+            System.out.println("  listreports - Lists all available reports");
+            System.out.println("  generate all - Generates all available reports");
+            System.out.println("  generate <ReportName...> - Generates the specified reports)");
             return;
         }
         String inputFile = args[0];
         String outputDir = args[1];
+        String command = args[2];
         try {
             validateInputFile(inputFile);
             validateOutputDir(outputDir);
             ReportManager reportManager = new ReportManager(inputFile, outputDir);
-            if (args.length == 2) {
-                reportManager.generateAllReports();
-                System.out.println("\nYou can choose a specific report if needed,");
-                System.out.println("All Available Reports:");
+            if ("listreports".equalsIgnoreCase(command)) {
                 listAvailableReports();
-            } else {
-                int i = 2;
-                while (i < args.length) {
-                    String reportName = args[i];
-                    reportManager.generateReport(reportName);
-                    i++;
+            } else if ("generate".equalsIgnoreCase(command)) {
+                if (args.length == 4 && "all".equalsIgnoreCase(args[3])) {
+                    reportManager.generateAllReports();
+                } else if (args.length >= 4) {
+                    for (int i = 3; i < args.length; i++) {
+                        reportManager.generateReport(args[i]);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Missing report name, Use 'generate all' or 'generate <ReportName...>'");
                 }
+            } else {
+                throw new IllegalArgumentException("Invalid command: " + command + ". Use 'listReports' or 'generate' to know more");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid input: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Unexpected error during purchase data analysis: " + e.getMessage());
         }
@@ -56,8 +61,9 @@ public class PurchaseAnalyzer {
 
     private static void listAvailableReports() {
         ServiceLoader<Report> allReports = ServiceLoader.load(Report.class);
+        System.out.println("\nAll available reports:");
         for (Report report : allReports) {
-            System.out.println("- " + report.getClass().getSimpleName());
+            System.out.println("- " + report.getName());
         }
     }
 }
