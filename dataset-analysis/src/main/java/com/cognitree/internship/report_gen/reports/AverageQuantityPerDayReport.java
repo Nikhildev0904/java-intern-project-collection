@@ -27,7 +27,7 @@ public class AverageQuantityPerDayReport implements Report {
                     writer.newLine();
                 }
             }
-            System.out.println("Day of Week Avg Quantity Report Generated Successfully");
+            System.out.println(" Avg Quantity Per Day of Week Report Generated Successfully");
         }
     }
 

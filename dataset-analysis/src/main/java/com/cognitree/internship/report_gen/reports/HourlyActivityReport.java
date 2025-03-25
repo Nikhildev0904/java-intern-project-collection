@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class HourlyActivityReport implements Report{
+public class HourlyActivityReport implements Report {
     private final Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions = new HashMap<>();
     private final Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems = new HashMap<>();
 
