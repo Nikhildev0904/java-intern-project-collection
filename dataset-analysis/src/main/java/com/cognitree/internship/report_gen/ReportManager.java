@@ -25,6 +25,10 @@ public class ReportManager {
     }
 
     public void generateReport(String reportName) throws IOException {
+        if (!reports.containsKey(reportName)) {
+            System.out.println("Invalid report named '" + reportName + "'");
+            return;
+        }
         initializeReport(reportName);
         Report report = reports.get(reportName);
         report.generateReport(outputDir);
@@ -46,12 +50,8 @@ public class ReportManager {
                 }
             }
         } else {
-            try {
-                for (BuyRecord record : records) {
-                    report.addRecord(record);
-                }
-            } catch (NullPointerException e) {
-                throw new IllegalArgumentException("Invalid report name '" + reportName + "' or report not available");
+            for (BuyRecord record : records) {
+                report.addRecord(record);
             }
         }
     }

@@ -50,6 +50,6 @@ public class AvgQuantityPerSessionReport implements Report {
 
     @Override
     public String getName() {
-        return "Average_Quantity_Per_Session";
+        return "avg_quantity_session";
     }
 }

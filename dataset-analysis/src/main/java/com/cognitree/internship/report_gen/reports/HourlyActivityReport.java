@@ -65,6 +65,6 @@ public class HourlyActivityReport implements Report {
 
     @Override
     public String getName() {
-        return "Hourly_Average_Sessions_And_Items";
+        return "hourly_activity";
     }
 }

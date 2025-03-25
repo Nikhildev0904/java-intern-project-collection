@@ -44,6 +44,6 @@ public class DistinctSessionReport implements Report {
 
     @Override
     public String getName() {
-        return "Distinct_Session_Count";
+        return "distinct_sessions";
     }
 }

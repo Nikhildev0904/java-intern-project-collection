@@ -38,6 +38,6 @@ public class PurchaseCountReport implements Report {
 
     @Override
     public String getName() {
-        return "Purchase_Count";
+        return "purchase_count";
     }
 }

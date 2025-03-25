@@ -52,7 +52,7 @@ public class AvgQuantityPerDayReport implements Report {
 
     @Override
     public String getName() {
-        return "Average_Quantity_Per_Day";
+        return "avg_quantity_day";
     }
 
     private static class Pair {
