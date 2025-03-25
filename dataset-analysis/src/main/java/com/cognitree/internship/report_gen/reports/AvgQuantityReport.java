@@ -29,7 +29,7 @@ public class AvgQuantityReport implements Report {
                 bufferedWriter.write(key + "," + value);
                 bufferedWriter.newLine();
             }
-            System.out.println("Report Generated Successfully");
+            System.out.println("Average Quantity Report Generated Successfully");
         }
     }
 

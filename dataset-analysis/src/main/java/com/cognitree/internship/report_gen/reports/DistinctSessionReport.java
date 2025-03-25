@@ -25,7 +25,7 @@ public class DistinctSessionReport implements Report {
                 bufferedWriter.write(entry.getKey() + "," + entry.getValue().size());
                 bufferedWriter.newLine();
             }
-            System.out.println("Report Generated Successfully");
+            System.out.println("Distinct Sessions Report Generated Successfully");
         }
     }
 

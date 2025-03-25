@@ -23,7 +23,7 @@ public class PurchaseCountReport implements Report {
                 bufferedWriter.write(entry.getKey() + "," + entry.getValue());
                 bufferedWriter.newLine();
             }
-            System.out.println("Report Generated Successfully");
+            System.out.println("Purchase Count Report Generated Successfully");
         }
     }
 
