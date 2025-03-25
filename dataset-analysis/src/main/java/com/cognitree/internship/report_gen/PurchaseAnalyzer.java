@@ -8,41 +8,53 @@ import java.util.ServiceLoader;
 public class PurchaseAnalyzer {
 
     public static void main(String[] args) {
-        if (args.length < 3) {
-            System.out.println("Use: java PurchaseAnalyzer <Input File> <Output Directory> <Command> [ReportName...]");
-            System.out.println("Commands:");
-            System.out.println("  listreports - Lists all available reports");
-            System.out.println("  generate all - Generates all available reports");
-            System.out.println("  generate <ReportName...> - Generates the specified reports)");
+        if (args.length < 1) {
+            printUsage();
             return;
         }
-        String inputFile = args[0];
-        String outputDir = args[1];
-        String command = args[2];
+        String command = args[0];
+        if ("listreports".equalsIgnoreCase(command)) {
+            listAvailableReports();
+            return;
+        }
+        if (!"generate".equalsIgnoreCase(command) || args.length < 4) {
+            System.out.println("Error: Invalid command or missing arguments.");
+            printUsage();
+            return;
+        }
+        String inputFile = args[args.length - 2];
+        String outputDir = args[args.length - 1];
         try {
             validateInputFile(inputFile);
             validateOutputDir(outputDir);
             ReportManager reportManager = new ReportManager(inputFile, outputDir);
-            if ("listreports".equalsIgnoreCase(command)) {
-                listAvailableReports();
-            } else if ("generate".equalsIgnoreCase(command)) {
-                if (args.length == 4 && "all".equalsIgnoreCase(args[3])) {
-                    reportManager.generateAllReports();
-                } else if (args.length >= 4) {
-                    for (int i = 3; i < args.length; i++) {
-                        reportManager.generateReport(args[i]);
-                    }
-                } else {
-                    throw new IllegalArgumentException("Missing report name, Use 'generate all' or 'generate <ReportName...>'");
+            if ("all".equalsIgnoreCase(args[1])) {
+                if (args.length > 4) {
+                    System.out.println("Error: Invalid usage");
+                    printUsage();
+                    return;
                 }
+                reportManager.generateAllReports();
+                System.out.println("All reports generated successfully.");
             } else {
-                throw new IllegalArgumentException("Invalid command: " + command + ". Use 'listReports' or 'generate' to know more");
+                for (int i = 1; i < args.length - 2; i++) {
+                    reportManager.generateReport(args[i]);
+                }
             }
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Unexpected error during purchase data analysis: " + e.getMessage());
+            System.out.println("Unexpected error: " + e.getMessage());
         }
+    }
+
+    private static void printUsage() {
+        System.out.println("Use:");
+        System.out.println("  To list reports:");
+        System.out.println("    java PurchaseAnalyzer listreports");
+        System.out.println("  To generate reports:");
+        System.out.println("    java PurchaseAnalyzer generate <ReportName...> <Input File> <Output Directory>");
+        System.out.println("    (Use 'all' instead of <ReportName...> to generate all reports)");
     }
 
     private static void validateInputFile(String path) {

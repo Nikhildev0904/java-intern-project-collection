@@ -46,8 +46,12 @@ public class ReportManager {
                 }
             }
         } else {
-            for (BuyRecord record : records) {
-                report.addRecord(record);
+            try {
+                for (BuyRecord record : records) {
+                    report.addRecord(record);
+                }
+            } catch (NullPointerException e) {
+                throw new IllegalArgumentException("Invalid report name '" + reportName + "' or report not available");
             }
         }
     }
