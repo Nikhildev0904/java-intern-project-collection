@@ -3,10 +3,7 @@ package com.cognitree.internship.report_gen.reports;
 import com.cognitree.internship.report_gen.BuyRecord;
 
 import java.io.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -50,7 +47,7 @@ public class HourlyActivityReport implements Report {
 
     @Override
     public void addRecord(BuyRecord record) {
-        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneId.systemDefault());
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneOffset.UTC);
         int hour = dateTime.getHour();
         LocalDate date = dateTime.toLocalDate();
         int sessionId = record.sessionID();

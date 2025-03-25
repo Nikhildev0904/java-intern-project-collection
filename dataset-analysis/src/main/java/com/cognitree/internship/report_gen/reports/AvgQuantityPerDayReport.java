@@ -7,7 +7,7 @@ import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AverageQuantityPerDayReport implements Report {
+public class AvgQuantityPerDayReport implements Report {
     private final Map<DayOfWeek, Map<Integer, Pair>> quantityPerDayMap = new HashMap<>();
 
     @Override
@@ -27,13 +27,13 @@ public class AverageQuantityPerDayReport implements Report {
                     writer.newLine();
                 }
             }
-            System.out.println(" Avg Quantity Per Day of Week Report Generated Successfully");
+            System.out.println("Avg Quantity Per Day of Week Report Generated Successfully");
         }
     }
 
     @Override
     public void addRecord(BuyRecord record) {
-        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneId.systemDefault());
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneOffset.UTC);
         DayOfWeek day = dateTime.getDayOfWeek();
         int itemID = record.itemID();
         int quantity = record.quantity();
@@ -49,7 +49,7 @@ public class AverageQuantityPerDayReport implements Report {
 
     @Override
     public String getName() {
-        return "AverageQuantityPerDayReport";
+        return "AvgQuantityPerDayReport";
     }
 
     private static class Pair {

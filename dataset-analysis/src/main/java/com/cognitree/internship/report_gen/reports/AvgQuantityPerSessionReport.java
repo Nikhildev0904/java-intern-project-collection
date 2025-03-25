@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class AvgQuantityReport implements Report {
+public class AvgQuantityPerSessionReport implements Report {
     private final Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
     private final Map<Integer, Integer> totalQuantityMap = new HashMap<>();
 
@@ -29,7 +29,7 @@ public class AvgQuantityReport implements Report {
                 bufferedWriter.write(key + "," + value);
                 bufferedWriter.newLine();
             }
-            System.out.println("Average Quantity Report Generated Successfully");
+            System.out.println("Average Quantity Per Session Report Generated Successfully");
         }
     }
 
@@ -47,6 +47,6 @@ public class AvgQuantityReport implements Report {
 
     @Override
     public String getName() {
-        return "AverageQuantityReport";
+        return "AvgQuantityPerSessionReport";
     }
 }
