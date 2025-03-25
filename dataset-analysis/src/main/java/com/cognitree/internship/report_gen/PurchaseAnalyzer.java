@@ -26,7 +26,6 @@ public class PurchaseAnalyzer {
                 System.out.println("All Available Reports:");
                 listAvailableReports();
             } else {
-
                 int i = 2;
                 while (i < args.length) {
                     String reportName = args[i];
