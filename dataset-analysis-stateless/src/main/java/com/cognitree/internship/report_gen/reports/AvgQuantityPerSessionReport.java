@@ -18,6 +18,30 @@ public class AvgQuantityPerSessionReport implements Report {
         Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
         Map<Integer, Integer> totalQuantityMap = new HashMap<>();
         addRecord(records, distinctSessionMap, totalQuantityMap);
+        writeReport(outputDir, distinctSessionMap, totalQuantityMap);
+    }
+
+    @Override
+    public String getName() {
+        return "avg_quantity_session";
+    }
+
+    private void addRecord(List<BuyRecord> records, Map<Integer, Set<Integer>> distinctSessionMap,
+                           Map<Integer, Integer> totalQuantityMap) {
+        for (BuyRecord record : records) {
+            int itemID = record.itemID();
+            int sessionID = record.sessionID();
+            int quantity = record.quantity();
+            if (!distinctSessionMap.containsKey(itemID)) {
+                distinctSessionMap.put(itemID, new HashSet<>());
+            }
+            distinctSessionMap.get(itemID).add(sessionID);
+            totalQuantityMap.put(itemID, totalQuantityMap.getOrDefault(itemID, 0) + quantity);
+        }
+    }
+
+    private void writeReport(String outputDir, Map<Integer, Set<Integer>> distinctSessionMap,
+                             Map<Integer, Integer> totalQuantityMap) throws IOException {
         Path outputPath = Paths.get(outputDir, "report_average_quantity_per_session.csv");
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
@@ -29,25 +53,7 @@ public class AvgQuantityPerSessionReport implements Report {
                 bufferedWriter.write(key + "," + value);
                 bufferedWriter.newLine();
             }
-            System.out.println("Average Quantity Per Session Report Generated Successfully");
         }
-    }
-
-    @Override
-    public String getName() {
-        return "avg_quantity_session";
-    }
-
-    private void addRecord(List<BuyRecord> records, Map<Integer, Set<Integer>> distinctSessionMap, Map<Integer, Integer> totalQuantityMap) {
-        for (BuyRecord record : records) {
-            int itemID = record.itemID();
-            int sessionID = record.sessionID();
-            int quantity = record.quantity();
-            if (!distinctSessionMap.containsKey(itemID)) {
-                distinctSessionMap.put(itemID, new HashSet<>());
-            }
-            distinctSessionMap.get(itemID).add(sessionID);
-            totalQuantityMap.put(itemID, totalQuantityMap.getOrDefault(itemID, 0) + quantity);
-        }
+        System.out.println("Average Quantity Per Session Report Generated Successfully");
     }
 }

@@ -16,6 +16,33 @@ public class HourlyActivityReport implements Report {
         Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions = new HashMap<>();
         Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems = new HashMap<>();
         addRecord(records, hourlySessions, hourlyItems);
+        writeReport(outputDir, hourlySessions, hourlyItems);
+    }
+
+    @Override
+    public String getName() {
+        return "hourly_activity";
+    }
+
+    private void addRecord(List<BuyRecord> records, Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions,
+                           Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems) {
+        for (BuyRecord record : records) {
+            LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneOffset.UTC);
+            int hour = dateTime.getHour();
+            LocalDate date = dateTime.toLocalDate();
+            int sessionId = record.sessionID();
+            int itemId = record.itemID();
+            hourlySessions.computeIfAbsent(hour, k -> new HashMap<>())
+                    .computeIfAbsent(date, d -> new HashSet<>())
+                    .add(sessionId);
+            hourlyItems.computeIfAbsent(hour, k -> new HashMap<>())
+                    .computeIfAbsent(date, d -> new HashSet<>())
+                    .add(itemId);
+        }
+    }
+
+    private void writeReport(String outputDir, Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions,
+                             Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems) throws IOException {
         Path outputPath = Paths.get(outputDir, "report_hourly_activity.csv");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(outputPath.toFile())))) {
@@ -45,26 +72,5 @@ public class HourlyActivityReport implements Report {
             }
         }
         System.out.println("Hourly Activity Report Generated Successfully");
-    }
-
-    @Override
-    public String getName() {
-        return "hourly_activity";
-    }
-
-    private void addRecord(List<BuyRecord> records, Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions, Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems) {
-        for (BuyRecord record : records) {
-            LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneOffset.UTC);
-            int hour = dateTime.getHour();
-            LocalDate date = dateTime.toLocalDate();
-            int sessionId = record.sessionID();
-            int itemId = record.itemID();
-            hourlySessions.computeIfAbsent(hour, k -> new HashMap<>())
-                    .computeIfAbsent(date, d -> new HashSet<>())
-                    .add(sessionId);
-            hourlyItems.computeIfAbsent(hour, k -> new HashMap<>())
-                    .computeIfAbsent(date, d -> new HashSet<>())
-                    .add(itemId);
-        }
     }
 }

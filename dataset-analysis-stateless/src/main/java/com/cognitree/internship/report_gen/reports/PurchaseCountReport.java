@@ -19,17 +19,7 @@ public class PurchaseCountReport implements Report {
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
         Map<Integer, Integer> purchaseCountMap = new HashMap<>();
         addRecord(records, purchaseCountMap);
-        Path outputPath = Paths.get(outputDir, "report_purchase_count.csv");
-        try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
-            bufferedWriter.write("ItemId,PurchaseEventCount");
-            bufferedWriter.newLine();
-            for (Map.Entry<Integer, Integer> entry : purchaseCountMap.entrySet()) {
-                bufferedWriter.write(entry.getKey() + "," + entry.getValue());
-                bufferedWriter.newLine();
-            }
-            System.out.println("Purchase Count Report Generated Successfully");
-        }
+        writeReport(outputDir, purchaseCountMap);
     }
 
     @Override
@@ -42,5 +32,19 @@ public class PurchaseCountReport implements Report {
             int itemID = record.itemID();
             purchaseCountMap.put(itemID, purchaseCountMap.getOrDefault(itemID, 0) + 1);
         }
+    }
+
+    private void writeReport(String outputDir, Map<Integer, Integer> purchaseCountMap) throws IOException {
+        Path outputPath = Paths.get(outputDir, "report_purchase_count.csv");
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
+             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
+            bufferedWriter.write("ItemId,PurchaseEventCount");
+            bufferedWriter.newLine();
+            for (Map.Entry<Integer, Integer> entry : purchaseCountMap.entrySet()) {
+                bufferedWriter.write(entry.getKey() + "," + entry.getValue());
+                bufferedWriter.newLine();
+            }
+        }
+        System.out.println("Purchase Count Report Generated Successfully");
     }
 }

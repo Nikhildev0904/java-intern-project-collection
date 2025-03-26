@@ -17,24 +17,7 @@ public class AvgQuantityPerDayReport implements Report {
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
         Map<DayOfWeek, Map<Integer, Pair>> quantityPerDayMap = new HashMap<>();
         addRecord(records, quantityPerDayMap);
-        Path outputPath = Paths.get(outputDir, "report_avg_quantity_per_day.csv");
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(outputPath.toFile())))) {
-            writer.write("DayOfWeek,ItemID,AvgQuantity");
-            writer.newLine();
-            for (Map.Entry<DayOfWeek, Map<Integer, Pair>> dayEntry : quantityPerDayMap.entrySet()) {
-                DayOfWeek day = dayEntry.getKey();
-                for (Map.Entry<Integer, Pair> itemEntry : dayEntry.getValue().entrySet()) {
-                    int itemId = itemEntry.getKey();
-                    int totalQuantity = itemEntry.getValue().totalQuantity;
-                    int noOfInstances = itemEntry.getValue().noOfInstances;
-                    double avgQuantity = (double) totalQuantity / noOfInstances;
-                    writer.write(day + "," + itemId + "," + avgQuantity);
-                    writer.newLine();
-                }
-            }
-            System.out.println("Avg Quantity Per Day of Week Report Generated Successfully");
-        }
+        writeReport(outputDir, quantityPerDayMap);
     }
 
     @Override
@@ -59,6 +42,27 @@ public class AvgQuantityPerDayReport implements Report {
         }
     }
 
+    private void writeReport(String outputDir, Map<DayOfWeek, Map<Integer, Pair>> quantityPerDayMap) throws IOException {
+        Path outputPath = Paths.get(outputDir, "report_avg_quantity_per_day.csv");
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(outputPath.toFile())))) {
+            writer.write("DayOfWeek,ItemID,AvgQuantity");
+            writer.newLine();
+            for (Map.Entry<DayOfWeek, Map<Integer, Pair>> dayEntry : quantityPerDayMap.entrySet()) {
+                DayOfWeek day = dayEntry.getKey();
+                for (Map.Entry<Integer, Pair> itemEntry : dayEntry.getValue().entrySet()) {
+                    int itemId = itemEntry.getKey();
+                    int totalQuantity = itemEntry.getValue().totalQuantity;
+                    int noOfInstances = itemEntry.getValue().noOfInstances;
+                    double avgQuantity = (double) totalQuantity / noOfInstances;
+                    writer.write(day + "," + itemId + "," + avgQuantity);
+                    writer.newLine();
+                }
+            }
+        }
+        System.out.println("Avg Quantity Per Day of Week Report Generated Successfully");
+    }
+
     private static class Pair {
         private int totalQuantity;
         private int noOfInstances;
@@ -68,4 +72,5 @@ public class AvgQuantityPerDayReport implements Report {
             this.totalQuantity = totalQuantity;
         }
     }
+
 }
