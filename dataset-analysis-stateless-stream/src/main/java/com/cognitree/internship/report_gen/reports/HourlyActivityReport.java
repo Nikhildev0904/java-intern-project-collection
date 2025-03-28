@@ -16,7 +16,7 @@ public class HourlyActivityReport implements Report {
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
         Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions = new HashMap<>();
         Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems = new HashMap<>();
-        addRecord(records, hourlySessions, hourlyItems);
+        aggregateRecords(records, hourlySessions, hourlyItems);
         writeReport(outputDir, hourlySessions, hourlyItems);
     }
 
@@ -25,8 +25,8 @@ public class HourlyActivityReport implements Report {
         return "hourly_activity";
     }
 
-    private void addRecord(List<BuyRecord> records, Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions,
-                           Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems) {
+    private void aggregateRecords(List<BuyRecord> records, Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions,
+                                  Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems) {
         hourlySessions.putAll(records.stream().
                 collect(Collectors.groupingBy(record -> {
                             LocalDateTime hour = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneOffset.UTC);

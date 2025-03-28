@@ -18,7 +18,7 @@ public class AvgQuantityPerSessionReport implements Report {
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
         Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
         Map<Integer, Long> totalQuantityMap = new HashMap<>();
-        addRecord(records, distinctSessionMap, totalQuantityMap);
+        aggregateRecords(records, distinctSessionMap, totalQuantityMap);
         writeReport(outputDir, distinctSessionMap, totalQuantityMap);
     }
 
@@ -27,16 +27,15 @@ public class AvgQuantityPerSessionReport implements Report {
         return "avg_quantity_session";
     }
 
-    private void addRecord(List<BuyRecord> records, Map<Integer, Set<Integer>> distinctSessionMap,
-                           Map<Integer, Long> totalQuantityMap) {
+    private void aggregateRecords(List<BuyRecord> records, Map<Integer, Set<Integer>> distinctSessionMap,
+                                  Map<Integer, Long> totalQuantityMap) {
         distinctSessionMap.putAll(records.stream()
                 .collect(Collectors.groupingBy(BuyRecord::itemID,
                         Collectors.mapping(BuyRecord::sessionID, Collectors.toSet())))
         );
-        totalQuantityMap.putAll(
-                records.stream()
-                        .collect(Collectors.groupingBy(BuyRecord::itemID,
-                                Collectors.summingLong(BuyRecord::quantity)))
+        totalQuantityMap.putAll(records.stream()
+                .collect(Collectors.groupingBy(BuyRecord::itemID,
+                        Collectors.summingLong(BuyRecord::quantity)))
         );
     }
 

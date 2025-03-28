@@ -16,7 +16,7 @@ public class DistinctSessionReport implements Report {
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
-        Map<Integer, Set<Integer>> distinctSessionMap = addRecord(records);
+        Map<Integer, Set<Integer>> distinctSessionMap = aggregateRecords(records);
         writeReport(outputDir, distinctSessionMap);
     }
 
@@ -25,7 +25,7 @@ public class DistinctSessionReport implements Report {
         return "distinct_sessions";
     }
 
-    private Map<Integer, Set<Integer>> addRecord(List<BuyRecord> records) {
+    private Map<Integer, Set<Integer>> aggregateRecords(List<BuyRecord> records) {
         return records.stream()
                 .collect(Collectors.groupingBy(BuyRecord::itemID,
                         Collectors.mapping(BuyRecord::sessionID, Collectors.toSet())));

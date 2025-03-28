@@ -17,7 +17,7 @@ public class PurchaseCountReport implements Report {
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
-        Map<Integer, Long> purchaseCountMap = addRecord(records);
+        Map<Integer, Long> purchaseCountMap = aggregateRecords(records);
         writeReport(outputDir, purchaseCountMap);
     }
 
@@ -26,7 +26,7 @@ public class PurchaseCountReport implements Report {
         return "purchase_count";
     }
 
-    private Map<Integer, Long> addRecord(List<BuyRecord> records) {
+    private Map<Integer, Long> aggregateRecords(List<BuyRecord> records) {
         return records.stream()
                 .collect(Collectors.groupingBy(BuyRecord::itemID, Collectors.counting()));
     }

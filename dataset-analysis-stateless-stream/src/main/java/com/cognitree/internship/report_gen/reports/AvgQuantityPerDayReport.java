@@ -15,7 +15,7 @@ public class AvgQuantityPerDayReport implements Report {
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
-        Map<DayOfWeek, Map<Integer, Double>> quantityPerDayMap = addRecord(records);
+        Map<DayOfWeek, Map<Integer, Double>> quantityPerDayMap = aggregateRecords(records);
         writeReport(outputDir, quantityPerDayMap);
     }
 
@@ -24,7 +24,7 @@ public class AvgQuantityPerDayReport implements Report {
         return "avg_quantity_day";
     }
 
-    private Map<DayOfWeek, Map<Integer, Double>> addRecord(List<BuyRecord> records) {
+    private Map<DayOfWeek, Map<Integer, Double>> aggregateRecords(List<BuyRecord> records) {
         return records.stream()
                 .collect(Collectors.groupingBy(record -> {
                                     LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.parse(record.timeStamp()), ZoneOffset.UTC);
