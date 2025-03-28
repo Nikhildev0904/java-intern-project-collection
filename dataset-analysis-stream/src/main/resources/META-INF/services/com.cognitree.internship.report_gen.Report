@@ -1,0 +1,6 @@
+com.cognitree.internship.report_gen.reports.PurchaseCountReport
+com.cognitree.internship.report_gen.reports.DistinctSessionReport
+com.cognitree.internship.report_gen.reports.AvgQuantityPerSessionReport
+com.cognitree.internship.report_gen.reports.AvgQuantityPerDayReport
+com.cognitree.internship.report_gen.reports.HourlyActivityReport
+
