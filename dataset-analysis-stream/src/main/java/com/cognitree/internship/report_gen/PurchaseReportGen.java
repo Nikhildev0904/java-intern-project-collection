@@ -3,7 +3,7 @@ package com.cognitree.internship.report_gen;
 import java.io.File;
 import java.util.ServiceLoader;
 
-public class PurchaseAnalyzer {
+public class PurchaseReportGen {
 
     public static void main(String[] args) {
         if (args.length < 1) {
@@ -11,7 +11,7 @@ public class PurchaseAnalyzer {
             return;
         }
         String command = args[0];
-        if ("listreports".equalsIgnoreCase(command)) {
+        if ("list".equalsIgnoreCase(command)) {
             listAvailableReports();
             return;
         }
@@ -48,10 +48,10 @@ public class PurchaseAnalyzer {
 
     private static void printUsage() {
         System.out.println("Use:");
-        System.out.println("  To list reports:");
-        System.out.println("    java PurchaseAnalyzer listreports");
+        System.out.println("  To list available reports:");
+        System.out.println("    java PurchaseReportGen list");
         System.out.println("  To generate reports:");
-        System.out.println("    java PurchaseAnalyzer generate <ReportName...> <Input File> <Output Directory>");
+        System.out.println("    java PurchaseReportGen generate <ReportName...> <InputFile> <OutputDirectory>");
         System.out.println("    (Use 'all' instead of <ReportName...> to generate all reports)");
     }
 
