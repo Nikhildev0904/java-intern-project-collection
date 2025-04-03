@@ -1,5 +1,14 @@
 package com.cognitree.internship.word_counter;
 
+import com.cognitree.internship.word_counter.forkjoin.ForkJoin;
+import com.cognitree.internship.word_counter.futures.CompletableFuture;
+import com.cognitree.internship.word_counter.sequential.Sequential;
+import com.cognitree.internship.word_counter.threadpools.CallableThreadPool;
+import com.cognitree.internship.word_counter.threadpools.RunnableThreadPool;
+import com.cognitree.internship.word_counter.threads.CallableThread;
+import com.cognitree.internship.word_counter.threads.ConcurrentRunnableThread;
+import com.cognitree.internship.word_counter.threads.SyncRunnableThread;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;

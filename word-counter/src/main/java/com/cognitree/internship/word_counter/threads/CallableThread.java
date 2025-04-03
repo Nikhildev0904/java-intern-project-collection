@@ -1,4 +1,4 @@
-package com.cognitree.internship.word_counter;
+package com.cognitree.internship.word_counter.threads;
 
 import java.util.ArrayList;
 import java.util.HashMap;

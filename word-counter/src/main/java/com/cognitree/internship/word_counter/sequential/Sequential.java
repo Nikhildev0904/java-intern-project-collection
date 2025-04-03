@@ -1,4 +1,4 @@
-package com.cognitree.internship.word_counter;
+package com.cognitree.internship.word_counter.sequential;
 
 import java.util.List;
 import java.util.Map;
