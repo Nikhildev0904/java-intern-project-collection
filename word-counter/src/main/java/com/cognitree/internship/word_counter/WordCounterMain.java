@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class WordCounterMain {
 
@@ -21,6 +22,11 @@ public class WordCounterMain {
             e.printStackTrace();
         }
         Comparison comparison = new Comparison();
-        comparison.compareAll(lines);
+        try {
+            comparison.compareAll(lines);
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
