@@ -1,4 +1,4 @@
-package com.cognitree.internship.word_counter.threadpool;
+package com.cognitree.internship.word_counter;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,10 +1,5 @@
-package com.cognitree.internship.word_counter.threadpool;
+package com.cognitree.internship.word_counter.futures;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,28 +9,34 @@ import java.util.concurrent.*;
 import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
 
-public class CallableWordCounter {
+public class FutureWordCounter {
 
     public Map<String, Integer> getWordCount(List<String> lines) throws InterruptedException, ExecutionException {
-        Map<String, Integer> wordCountMap = new HashMap<>();
+        Map<String, Integer> sharedMap = new HashMap<>();
         int numThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
         int linesPerThread = (lines.size() + numThreads - 1) / numThreads;
-        List<Callable<Map<String, Integer>>> tasks = new ArrayList<>();
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
         for (int i = 0; i < numThreads; i++) {
             final int threadIndex = i;
-            tasks.add(() -> {
+            CompletableFuture<Void> completableFuture = CompletableFuture.supplyAsync(() -> {
                 int start = threadIndex * linesPerThread;
                 int end = Math.min(start + linesPerThread, lines.size());
                 return processLines(lines.subList(start, end));
+            }, executorService).thenAccept(localMap -> {
+                localMap.forEach((word, count) -> {
+                    synchronized (sharedMap) {
+                        sharedMap.merge(word, count, Integer::sum);
+                    }
+                });
             });
+            futures.add(completableFuture);
         }
-        List<Future<Map<String, Integer>>> futures = executorService.invokeAll(tasks);
-        for (Future<Map<String, Integer>> future : futures) {
-            Map<String, Integer> localMap = future.get();
-            localMap.forEach((word, count) -> wordCountMap.merge(word, count, Integer::sum));
-        }
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                futures.toArray(new CompletableFuture[0])
+        );
+        allFutures.get();
         executorService.shutdown();
-        return wordCountMap;
+        return sharedMap;
     }
 }

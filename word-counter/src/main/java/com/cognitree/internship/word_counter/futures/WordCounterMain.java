@@ -1,13 +1,13 @@
-package com.cognitree.internship.word_counter.threadpool;
+package com.cognitree.internship.word_counter.futures;
 
 import com.cognitree.internship.word_counter.sequential.WordCounter;
+import com.cognitree.internship.word_counter.threadpool.RunnableWordCounter;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import static com.cognitree.internship.word_counter.TextFileParser.parseFile;
-
 
 public class WordCounterMain {
 
@@ -21,9 +21,8 @@ public class WordCounterMain {
         try {
             lines = parseFile(inputFile);
         } catch (IOException e) {
-            return;
+            throw new RuntimeException(e);
         }
-
         /* -- Sequential Computation -- */
         long start = System.currentTimeMillis();
         WordCounter wordCounter = new WordCounter();
@@ -31,12 +30,12 @@ public class WordCounterMain {
         long end = System.currentTimeMillis();
         System.out.println("Time taken for Sequential Computation: " + (end - start));
 
-        /* -- Multithreading Using Threadpool - Runnable -- */
+        /* -- Multithreading Using Completable Future -- */
         start = System.currentTimeMillis();
-        RunnableWordCounter runnableWordCounter = new RunnableWordCounter();
-        Map<String, Integer> runnableWordCounterWordCount;
+        FutureWordCounter futureWordCounterObj = new FutureWordCounter();
+        Map<String, Integer> futureWordCounter;
         try {
-            runnableWordCounterWordCount = runnableWordCounter.getWordCount(lines);
+            futureWordCounter = futureWordCounterObj.getWordCount(lines);
         } catch (InterruptedException e) {
             System.out.println("Thread execution was interrupted: " + e.getMessage());
             return;
@@ -46,27 +45,8 @@ public class WordCounterMain {
             return;
         }
         end = System.currentTimeMillis();
-        System.out.println("Time taken for Threadpool using Runnable: " + (end - start));
-        System.out.println("Validation of results : " + compareResults(wordCountMap, runnableWordCounterWordCount));
-
-
-        /* -- Multithreading Using Threadpool - Callable -- */
-        start = System.currentTimeMillis();
-        CallableWordCounter callableWordCounter = new CallableWordCounter();
-        Map<String, Integer> callableWordCounterWordCount;
-        try {
-            callableWordCounterWordCount = callableWordCounter.getWordCount(lines);
-        } catch (InterruptedException e) {
-            System.out.println("Thread execution was interrupted: " + e.getMessage());
-            return;
-        } catch (Exception e) {
-            System.out.println("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
-        end = System.currentTimeMillis();
-        System.out.println("Time taken for Threadpool using Callable: " + (end - start));
-        System.out.println("Validation of results : " + compareResults(wordCountMap, callableWordCounterWordCount));
+        System.out.println("Time taken for Completable Future: " + (end - start));
+        System.out.println("Validation of results : " + compareResults(wordCountMap, futureWordCounter));
     }
 
     private static boolean compareResults(Map<String, Integer> map1, Map<String, Integer> map2) {

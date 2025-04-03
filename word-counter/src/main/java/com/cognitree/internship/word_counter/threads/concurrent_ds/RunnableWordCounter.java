@@ -1,9 +1,8 @@
-package com.cognitree.internship.word_counter.threadpool;
+package com.cognitree.internship.word_counter.threads.concurrent_ds;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
@@ -13,11 +12,11 @@ public class RunnableWordCounter {
     public Map<String, Integer> getWordCount(List<String> lines) throws InterruptedException {
         Map<String, Integer> sharedMap = new ConcurrentHashMap<>();
         int numThreads = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+        Thread[] threads = new Thread[numThreads];
         int linesPerThread = (lines.size() + numThreads - 1) / numThreads;
         for (int i = 0; i < numThreads; i++) {
             final int threadIndex = i;
-            executorService.execute(() -> {
+            threads[i] = new Thread(() -> {
                 int start = threadIndex * linesPerThread;
                 int end = Math.min(start + linesPerThread, lines.size());
                 List<String> linesToProcess = lines.subList(start, end);
@@ -26,9 +25,11 @@ public class RunnableWordCounter {
                     sharedMap.merge(entry.getKey(), entry.getValue(), Integer::sum);
                 }
             });
+            threads[i].start();
         }
-        executorService.shutdown();
-        executorService.awaitTermination(1, TimeUnit.SECONDS);
+        for (int i = 0; i < numThreads; i++) {
+            threads[i].join();
+        }
         return sharedMap;
     }
 }

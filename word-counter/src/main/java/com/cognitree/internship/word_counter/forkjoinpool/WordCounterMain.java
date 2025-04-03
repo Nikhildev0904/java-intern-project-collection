@@ -1,4 +1,4 @@
-package com.cognitree.internship.word_counter.threadpool;
+package com.cognitree.internship.word_counter.forkjoinpool;
 
 import com.cognitree.internship.word_counter.sequential.WordCounter;
 
@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.cognitree.internship.word_counter.TextFileParser.parseFile;
-
 
 public class WordCounterMain {
 
@@ -21,7 +20,7 @@ public class WordCounterMain {
         try {
             lines = parseFile(inputFile);
         } catch (IOException e) {
-            return;
+            throw new RuntimeException(e);
         }
 
         /* -- Sequential Computation -- */
@@ -31,42 +30,34 @@ public class WordCounterMain {
         long end = System.currentTimeMillis();
         System.out.println("Time taken for Sequential Computation: " + (end - start));
 
-        /* -- Multithreading Using Threadpool - Runnable -- */
+        /* -- Multithreading Using ForkJoin - Recursive Action -- */
         start = System.currentTimeMillis();
-        RunnableWordCounter runnableWordCounter = new RunnableWordCounter();
-        Map<String, Integer> runnableWordCounterWordCount;
+        ForkJoinWordCounter forkJoinWordCounter = new ForkJoinWordCounter();
+        Map<String, Integer> forkJoinActionWordCount;
         try {
-            runnableWordCounterWordCount = runnableWordCounter.getWordCount(lines);
-        } catch (InterruptedException e) {
-            System.out.println("Thread execution was interrupted: " + e.getMessage());
-            return;
+            forkJoinActionWordCount = forkJoinWordCounter.getWordCountWithForkJoinAction(lines);
         } catch (Exception e) {
             System.out.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
             return;
         }
         end = System.currentTimeMillis();
-        System.out.println("Time taken for Threadpool using Runnable: " + (end - start));
-        System.out.println("Validation of results : " + compareResults(wordCountMap, runnableWordCounterWordCount));
+        System.out.println("Time taken for ForkJoin RecursiveAction: " + (end - start));
+        System.out.println("Validation of results : " + compareResults(wordCountMap, forkJoinActionWordCount));
 
-
-        /* -- Multithreading Using Threadpool - Callable -- */
+        /* -- Multithreading Using ForkJoin - Recursive Task -- */
         start = System.currentTimeMillis();
-        CallableWordCounter callableWordCounter = new CallableWordCounter();
-        Map<String, Integer> callableWordCounterWordCount;
+        Map<String, Integer> forkJoinTaskWordCounter;
         try {
-            callableWordCounterWordCount = callableWordCounter.getWordCount(lines);
-        } catch (InterruptedException e) {
-            System.out.println("Thread execution was interrupted: " + e.getMessage());
-            return;
+            forkJoinTaskWordCounter = forkJoinWordCounter.getWordCountWithForkJoinTask(lines);
         } catch (Exception e) {
             System.out.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();
             return;
         }
         end = System.currentTimeMillis();
-        System.out.println("Time taken for Threadpool using Callable: " + (end - start));
-        System.out.println("Validation of results : " + compareResults(wordCountMap, callableWordCounterWordCount));
+        System.out.println("Time taken for ForkJoin RecursiveTask: " + (end - start));
+        System.out.println("Validation of results : " + compareResults(wordCountMap, forkJoinTaskWordCounter));
     }
 
     private static boolean compareResults(Map<String, Integer> map1, Map<String, Integer> map2) {
