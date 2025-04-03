@@ -1,6 +1,5 @@
-package com.cognitree.internship.word_counter.threadpool;
+package com.cognitree.internship.word_counter;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -8,7 +7,7 @@ import java.util.concurrent.*;
 import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
 
-public class RunnableWordCounter {
+public class RunnableThreadPool {
 
     public Map<String, Integer> getWordCount(List<String> lines) throws InterruptedException {
         Map<String, Integer> sharedMap = new ConcurrentHashMap<>();
@@ -20,8 +19,7 @@ public class RunnableWordCounter {
             executorService.execute(() -> {
                 int start = threadIndex * linesPerThread;
                 int end = Math.min(start + linesPerThread, lines.size());
-                List<String> linesToProcess = lines.subList(start, end);
-                Map<String, Integer> localCounts = processLines(linesToProcess);
+                Map<String, Integer> localCounts = processLines(lines, start, end);
                 for (Map.Entry<String, Integer> entry : localCounts.entrySet()) {
                     sharedMap.merge(entry.getKey(), entry.getValue(), Integer::sum);
                 }

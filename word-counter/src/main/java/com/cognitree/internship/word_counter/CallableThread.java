@@ -1,4 +1,4 @@
-package com.cognitree.internship.word_counter.threads;
+package com.cognitree.internship.word_counter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 
 import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
-public class CallableWordCounter {
+public class CallableThread {
 
     public Map<String, Integer> getWordCount(List<String> lines) throws InterruptedException, ExecutionException {
         Map<String, Integer> wordCountMap = new HashMap<>();
@@ -21,7 +21,7 @@ public class CallableWordCounter {
             Callable<Map<String, Integer>> callable = () -> {
                 int start = threadIndex * linesPerThread;
                 int end = Math.min(start + linesPerThread, lines.size());
-                return processLines(lines.subList(start, end));
+                return processLines(lines, start, end);
             };
             FutureTask<Map<String, Integer>> task = new FutureTask<>(callable);
             tasks.add(task);

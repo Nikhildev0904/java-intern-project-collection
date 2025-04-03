@@ -6,9 +6,10 @@ import java.util.Map;
 
 public class LineProcessor {
 
-    public static Map<String, Integer> processLines(List<String> lines) {
+    public static Map<String, Integer> processLines(List<String> lines, int start, int end) {
         Map<String, Integer> wordCounts = new HashMap<>();
-        for (String line : lines) {
+        for (int i = start; i < end; i++) {
+            String line = lines.get(i);
             String[] words = line.toLowerCase().split("\\W+");
             for (String word : words) {
                 if (!word.isEmpty()) {
