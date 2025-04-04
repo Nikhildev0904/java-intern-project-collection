@@ -8,7 +8,7 @@ import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
 public class WordCountRecursiveTask extends RecursiveTask<Map<String, Integer>> {
     private final List<String> lines;
-    private static final int minLines = 1000;
+    private static final int minLines = 250000;
     private final int start;
     private final int end;
 
@@ -30,9 +30,9 @@ public class WordCountRecursiveTask extends RecursiveTask<Map<String, Integer>> 
         leftTask.fork();
         Map<String, Integer> rightResult = rightTask.compute();
         Map<String, Integer> leftResult = leftTask.join();
-        for (Map.Entry<String, Integer> entry : leftResult.entrySet()) {
-            rightResult.merge(entry.getKey(), entry.getValue(), Integer::sum);
-        }
+        leftResult.forEach((key, value) ->
+                rightResult.merge(key, value, Integer::sum)
+        );
         return rightResult;
     }
 }

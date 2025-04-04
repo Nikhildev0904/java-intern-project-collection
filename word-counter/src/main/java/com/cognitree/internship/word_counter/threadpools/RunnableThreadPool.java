@@ -26,7 +26,7 @@ public class RunnableThreadPool {
             });
         }
         executorService.shutdown();
-        executorService.awaitTermination(1, TimeUnit.SECONDS);
+        executorService.awaitTermination(1, TimeUnit.MINUTES);
         return sharedMap;
     }
 }

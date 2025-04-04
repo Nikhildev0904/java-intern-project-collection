@@ -9,7 +9,7 @@ import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 public class WordCountRecursiveAction extends RecursiveAction {
     private final List<String> lines;
     private final Map<String, Integer> sharedMap;
-    private static final int minLines = 1000;
+    private static final int minLines = 250000;
     private final int start;
     private final int end;
 
@@ -25,11 +25,9 @@ public class WordCountRecursiveAction extends RecursiveAction {
         int size = end - start;
         if (size <= minLines) {
             Map<String, Integer> localMap = processLines(lines, start, end);
-            synchronized (sharedMap) {
-                for (Map.Entry<String, Integer> entry : localMap.entrySet()) {
-                    sharedMap.merge(entry.getKey(), entry.getValue(), Integer::sum);
-                }
-            }
+            localMap.forEach((key, value) ->
+                    sharedMap.merge(key, value, Integer::sum)
+            );
             return;
         }
         int mid = start + size / 2;

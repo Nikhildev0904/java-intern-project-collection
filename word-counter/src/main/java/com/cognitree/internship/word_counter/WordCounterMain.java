@@ -20,6 +20,7 @@ public class WordCounterMain {
         } catch (IOException e) {
             System.out.println("Error parsing the input file");
             e.printStackTrace();
+            return;
         }
         Comparison comparison = new Comparison();
         try {

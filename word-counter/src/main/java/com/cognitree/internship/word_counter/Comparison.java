@@ -23,14 +23,6 @@ public class Comparison {
         long end = System.currentTimeMillis();
         System.out.println("Time taken for Sequential Computation: " + (end - start));
 
-        /* -- Multithreading using threads - runnable with concurrent data structure */
-        start = System.currentTimeMillis();
-        ConcurrentRunnableThread concurrentRunnableThread = new ConcurrentRunnableThread();
-        Map<String, Integer> concurrentRunnableWordCount = concurrentRunnableThread.getWordCount(lines);
-        end = System.currentTimeMillis();
-        System.out.println("Time taken for Runnable threads using concurrent data structure: " + (end - start));
-        System.out.println("Validation of results : " + compareResults(wordCountMap, concurrentRunnableWordCount));
-
         /* -- Multithreading using threads - runnable with synchronized block */
         start = System.currentTimeMillis();
         SyncRunnableThread syncRunnableThread = new SyncRunnableThread();
@@ -38,6 +30,14 @@ public class Comparison {
         end = System.currentTimeMillis();
         System.out.println("Time taken for Runnable threads with synchronized block: " + (end - start));
         System.out.println("Validation of results : " + compareResults(wordCountMap, SyncRunnableWordCount));
+
+        /* -- Multithreading using threads - runnable with concurrent data structure */
+        start = System.currentTimeMillis();
+        ConcurrentRunnableThread concurrentRunnableThread = new ConcurrentRunnableThread();
+        Map<String, Integer> concurrentRunnableWordCount = concurrentRunnableThread.getWordCount(lines);
+        end = System.currentTimeMillis();
+        System.out.println("Time taken for Runnable threads using concurrent data structure: " + (end - start));
+        System.out.println("Validation of results : " + compareResults(wordCountMap, concurrentRunnableWordCount));
 
         /* -- Multithreading using threads - callable */
         start = System.currentTimeMillis();
