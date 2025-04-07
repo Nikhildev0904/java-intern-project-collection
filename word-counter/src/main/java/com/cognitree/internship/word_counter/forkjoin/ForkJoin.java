@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-
 public class ForkJoin {
 
     public Map<String, Integer> getWordCountWithForkJoinTask(List<String> lines) {

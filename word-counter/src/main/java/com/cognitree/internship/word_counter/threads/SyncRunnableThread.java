@@ -6,7 +6,6 @@ import java.util.Map;
 
 import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
-
 public class SyncRunnableThread {
 
     public Map<String, Integer> getWordCount(List<String> lines) throws InterruptedException {
