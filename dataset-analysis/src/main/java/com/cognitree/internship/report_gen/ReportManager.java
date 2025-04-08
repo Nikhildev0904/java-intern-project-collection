@@ -1,7 +1,5 @@
 package com.cognitree.internship.report_gen;
 
-import com.cognitree.internship.report_gen.reports.Report;
-
 import java.io.IOException;
 import java.util.*;
 
