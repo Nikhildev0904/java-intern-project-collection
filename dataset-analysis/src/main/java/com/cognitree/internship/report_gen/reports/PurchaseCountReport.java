@@ -1,6 +1,7 @@
 package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
+import com.cognitree.internship.report_gen.Report;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;

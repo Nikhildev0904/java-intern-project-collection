@@ -1,6 +1,4 @@
-package com.cognitree.internship.report_gen.reports;
-
-import com.cognitree.internship.report_gen.BuyRecord;
+package com.cognitree.internship.report_gen;
 
 import java.io.IOException;
 
