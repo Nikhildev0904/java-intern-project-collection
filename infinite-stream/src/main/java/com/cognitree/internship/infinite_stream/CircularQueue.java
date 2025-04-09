@@ -1,6 +1,10 @@
 package com.cognitree.internship.infinite_stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Class to implement CircularQueue
@@ -8,6 +12,7 @@ import java.util.Iterator;
  * @param <T> - Generic type
  */
 public class CircularQueue<T> implements Iterable<T> {
+    private static final Logger logger = LoggerFactory.getLogger(CircularQueue.class);
     private final T[] array;
     private int index;
     private int length;
@@ -57,6 +62,10 @@ public class CircularQueue<T> implements Iterable<T> {
 
             @Override
             public T next() {
+                if(!hasNext()){
+                    logger.error("next() method called without any elements in the queue");
+                    throw new NoSuchElementException("Empty queue");
+                }
                 T value = array[head];
                 head = (head + 1) % array.length;
                 count++;

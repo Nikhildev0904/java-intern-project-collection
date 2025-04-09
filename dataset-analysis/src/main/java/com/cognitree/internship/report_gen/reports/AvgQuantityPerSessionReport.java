@@ -2,6 +2,8 @@ package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
 import com.cognitree.internship.report_gen.Report;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -15,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class AvgQuantityPerSessionReport implements Report {
+    private static final Logger logger = LoggerFactory.getLogger(AvgQuantityPerSessionReport.class);
     private final Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
     private final Map<Integer, Integer> totalQuantityMap = new HashMap<>();
 
@@ -33,7 +36,7 @@ public class AvgQuantityPerSessionReport implements Report {
                 bufferedWriter.write(key + "," + value);
                 bufferedWriter.newLine();
             }
-            System.out.println("Average Quantity Per Session Report Generated Successfully");
+            logger.info("Average Quantity Per Session Report Generated Successfully");
         }
     }
 

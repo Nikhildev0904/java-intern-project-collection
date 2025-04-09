@@ -1,9 +1,13 @@
 package com.cognitree.internship.twostacks.unified_stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class TwoStacks<T> {
+    private static final Logger logger = LoggerFactory.getLogger(TwoStacks.class);
     private final LeftStack leftStack;
     private final RightStack rightStack;
     private final T[] array;
@@ -12,6 +16,7 @@ public class TwoStacks<T> {
         array = (T[]) new Object[size];
         leftStack = new LeftStack();
         rightStack = new RightStack();
+        logger.info("Initialized twostacks with size: {}",size);
     }
 
     public Stack<T> getLeftStack() {
@@ -36,6 +41,7 @@ public class TwoStacks<T> {
         @Override
         public void push(T element) {
             if (isFull()) {
+                logger.error("Left stack overflow");
                 throw new IllegalStateException("Left stack overflow");
             }
             leftTop++;
@@ -45,6 +51,7 @@ public class TwoStacks<T> {
         @Override
         public T pop() {
             if (isEmpty()) {
+                logger.error("Left stack underflow");
                 throw new NoSuchElementException("Left stack underflow");
             }
             T last = array[leftTop];
@@ -56,6 +63,7 @@ public class TwoStacks<T> {
         @Override
         public T peek() {
             if (isEmpty()) {
+                logger.error("Left stack is empty");
                 throw new NoSuchElementException("Left stack is empty");
             }
             return array[leftTop];
@@ -89,6 +97,7 @@ public class TwoStacks<T> {
                 @Override
                 public T next() {
                     if (!hasNext()) {
+                        logger.error("next() called but no more elements available in the left stack");
                         throw new NoSuchElementException("Left stack is empty");
                     }
                     return array[current--];
@@ -103,6 +112,7 @@ public class TwoStacks<T> {
         @Override
         public void push(T element) {
             if (isFull()) {
+                logger.error("Right stack overflow");
                 throw new IllegalStateException("Right stack overflow");
             }
             rightTop--;
@@ -112,6 +122,7 @@ public class TwoStacks<T> {
         @Override
         public T pop() {
             if (isEmpty()) {
+                logger.error("Right stack underflow");
                 throw new NoSuchElementException("Right stack underflow");
             }
             T last = array[rightTop];
@@ -123,6 +134,7 @@ public class TwoStacks<T> {
         @Override
         public T peek() {
             if (isEmpty()) {
+                logger.error("Right stack is empty");
                 throw new NoSuchElementException("Right stack is empty");
             }
             return array[rightTop];
@@ -156,6 +168,7 @@ public class TwoStacks<T> {
                 @Override
                 public T next() {
                     if (!hasNext()) {
+                        logger.error("next() called but no more elements available in the right stack");
                         throw new NoSuchElementException("Right stack is empty");
                     }
                     return array[current++];

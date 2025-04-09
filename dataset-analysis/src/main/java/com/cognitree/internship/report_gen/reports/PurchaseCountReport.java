@@ -2,6 +2,8 @@ package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
 import com.cognitree.internship.report_gen.Report;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PurchaseCountReport implements Report {
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseCountReport.class);
     private final Map<Integer, Integer> purchaseCountMap = new HashMap<>();
 
     @Override
@@ -27,7 +30,7 @@ public class PurchaseCountReport implements Report {
                 bufferedWriter.write(entry.getKey() + "," + entry.getValue());
                 bufferedWriter.newLine();
             }
-            System.out.println("Purchase Count Report Generated Successfully");
+            logger.info("Purchase Count Report Generated Successfully");
         }
     }
 

@@ -1,6 +1,8 @@
 package com.cognitree.internship.exp_eval;
 
 import com.cognitree.internship.exp_eval.tokens.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.Stack;
 import java.util.HashSet;
 
 public class ExpParser {
+    private static final Logger logger = LoggerFactory.getLogger(ExpParser.class);
     private final List<Token> parsedExpression;
 
     public ExpParser(String expression) {
@@ -22,6 +25,7 @@ public class ExpParser {
                 variables.add(variableToken.getVarName());
             }
         }
+        logger.info("Extracted variables: {}", variables);
         return variables;
     }
 
@@ -30,11 +34,13 @@ public class ExpParser {
     }
 
     private List<Token> parseExpression(String expression) throws RuntimeException {
+        logger.info("Initializing parser for expression: {}", expression);
         List<Token> parsedExpression;
         try {
             List<Token> tokenisedExpression = tokeniseExpression(expression);
             parsedExpression = convertInfixToPostfix(tokenisedExpression);
         } catch (RuntimeException e) {
+            logger.error("Error while parsing expression: {}", expression, e);
             throw new RuntimeException(e);
         }
         return parsedExpression;
@@ -66,7 +72,7 @@ public class ExpParser {
                 tokens.add(new OperatorToken(character));
                 i++;
             } else {
-                System.out.println("Wrong Input");
+                logger.error("Invalid character '{}' in expression", character);
                 throw new RuntimeException("Please provide valid Input");
             }
         }

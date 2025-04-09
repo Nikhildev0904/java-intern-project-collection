@@ -1,11 +1,17 @@
 package com.cognitree.internship.report_gen;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.*;
 
 public class PurchaseDataParser {
 
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseDataParser.class);
+
     public List<BuyRecord> parseRawData(String path) throws IOException {
+        logger.info("Parsing the input file: {}", path);
         List<BuyRecord> records = new ArrayList<>();
         try (FileInputStream fileInputStream = new FileInputStream(path);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream))) {
