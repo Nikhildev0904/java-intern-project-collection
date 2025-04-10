@@ -13,7 +13,7 @@ import java.util.*;
 
 public class HourlyActivityReport implements Report {
 
-    private static final Logger log = LoggerFactory.getLogger(HourlyActivityReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(HourlyActivityReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -75,6 +75,6 @@ public class HourlyActivityReport implements Report {
                 writer.newLine();
             }
         }
-        log.info("Hourly Activity Report Generated Successfully");
+        logger.info("Hourly Activity Report Generated Successfully");
     }
 }

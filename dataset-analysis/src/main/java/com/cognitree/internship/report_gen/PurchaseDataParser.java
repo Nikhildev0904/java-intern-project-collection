@@ -7,7 +7,9 @@ import java.io.*;
 import java.util.*;
 
 public class PurchaseDataParser {
+
     private static final Logger logger = LoggerFactory.getLogger(PurchaseDataParser.class);
+
     private final List<BuyRecord> records;
 
     public PurchaseDataParser(String path) throws IOException {

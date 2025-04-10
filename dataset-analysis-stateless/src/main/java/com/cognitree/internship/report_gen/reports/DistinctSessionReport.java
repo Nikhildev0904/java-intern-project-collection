@@ -15,7 +15,7 @@ import java.util.*;
 
 public class DistinctSessionReport implements Report {
 
-    private static final Logger log = LoggerFactory.getLogger(DistinctSessionReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(DistinctSessionReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -51,6 +51,6 @@ public class DistinctSessionReport implements Report {
                 bufferedWriter.newLine();
             }
         }
-        log.info("Distinct Sessions Report Generated Successfully");
+        logger.info("Distinct Sessions Report Generated Successfully");
     }
 }

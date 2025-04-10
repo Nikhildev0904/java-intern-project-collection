@@ -6,10 +6,13 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class SlidingWindowIterator<T> implements Iterator<List<T>> {
+
     private static final Logger logger = LoggerFactory.getLogger(SlidingWindowIterator.class);
+
     private final Iterator<T> iterator;
     private final CircularQueue<T> window;
     private final int windowSize;
+
     private boolean isWindowFilled = false;
 
     public SlidingWindowIterator(Iterable<T> iterable, int windowSize) {
@@ -27,16 +30,14 @@ public class SlidingWindowIterator<T> implements Iterator<List<T>> {
     @Override
     public List<T> next() {
         if (!hasNext()) {
-            logger.error("next() called but no more elements available.");
-            throw new NoSuchElementException("No elements left");
+            throw new NoSuchElementException("Iterator.next() called with no more elements");
         }
         while (window.getLength() < windowSize && iterator.hasNext()) {
             window.slide(iterator.next());
         }
         isWindowFilled = window.getLength() == windowSize;
         if (!isWindowFilled) {
-            logger.error("Not enough elements to fill the window.");
-            throw new NoSuchElementException("No more windows available");
+            throw new NoSuchElementException("Not enough elements to fill the window.");
         }
         List<T> batch = window.getWindowElements();
         if (iterator.hasNext()) {

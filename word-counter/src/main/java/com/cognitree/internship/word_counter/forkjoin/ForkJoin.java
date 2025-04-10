@@ -13,7 +13,7 @@ public class ForkJoin {
 
     public Map<String, Integer> getWordCountWithForkJoinTask(List<String> lines) {
         ForkJoinPool forkJoinPool = new ForkJoinPool(8);
-        logger.info("Starting {} word counter with 8 parallelism",WordCountRecursiveTask.class.getSimpleName());
+        logger.info("Starting {} word counter with 8 parallelism", WordCountRecursiveTask.class.getSimpleName());
         WordCountRecursiveTask task = new WordCountRecursiveTask(lines, 0, lines.size());
         Map<String, Integer> sharedMap = forkJoinPool.invoke(task);
         logger.info("All subtasks finished. ForkJoin Recursive Task completed. Total unique words: {}", sharedMap.size());
@@ -23,7 +23,7 @@ public class ForkJoin {
     public Map<String, Integer> getWordCountWithForkJoinAction(List<String> lines) {
         Map<String, Integer> sharedMap = new ConcurrentHashMap<>();
         ForkJoinPool forkJoinPool = new ForkJoinPool(8);
-        logger.info("Starting {} word counter with 8 parallelism",WordCountRecursiveAction.class.getSimpleName());
+        logger.info("Starting {} word counter with 8 parallelism", WordCountRecursiveAction.class.getSimpleName());
         WordCountRecursiveAction action = new WordCountRecursiveAction(lines, 0, lines.size(), sharedMap);
         forkJoinPool.invoke(action);
         logger.info("All subtasks finished. ForkJoin Recursive Action completed. Total unique words: {}", sharedMap.size());

@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PurchaseCountReport implements Report {
-    private static final Logger log = LoggerFactory.getLogger(PurchaseCountReport.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseCountReport.class);
+
     private final Map<Integer, Integer> purchaseCountMap = new HashMap<>();
 
     @Override
@@ -30,7 +32,7 @@ public class PurchaseCountReport implements Report {
                 bufferedWriter.write(entry.getKey() + "," + entry.getValue());
                 bufferedWriter.newLine();
             }
-            log.info("Purchase Count Report Generated Successfully");
+            logger.info("Purchase Count Report Generated Successfully");
         }
     }
 

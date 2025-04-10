@@ -6,8 +6,11 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class CircularQueue<T> implements Iterable<T> {
+
     private static final Logger logger = LoggerFactory.getLogger(CircularQueue.class);
+
     private final T[] array;
+
     private int index;
     private int length;
 

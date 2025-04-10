@@ -10,6 +10,7 @@ import java.util.Map;
 import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
 public class SyncRunnableThread {
+
     private static final Logger logger = LoggerFactory.getLogger(SyncRunnableThread.class);
 
     public Map<String, Integer> getWordCount(List<String> lines) throws InterruptedException {
@@ -17,7 +18,7 @@ public class SyncRunnableThread {
         int numThreads = Runtime.getRuntime().availableProcessors();
         Thread[] threads = new Thread[numThreads];
         int linesPerThread = (lines.size() + numThreads - 1) / numThreads;
-        logger.info("Starting {} word counter with {} threads",this.getClass().getSimpleName(), numThreads);
+        logger.info("Starting {} word counter with {} threads", this.getClass().getSimpleName(), numThreads);
         for (int i = 0; i < numThreads; i++) {
             final int threadIndex = i;
             threads[i] = new Thread(() -> {
@@ -37,7 +38,7 @@ public class SyncRunnableThread {
         for (int i = 0; i < numThreads; i++) {
             threads[i].join();
         }
-        logger.info("All threads finished. Total unique words: {}", sharedMap.size());
+        logger.info("All threads finished computation. Total unique words: {}", sharedMap.size());
         return sharedMap;
     }
 }

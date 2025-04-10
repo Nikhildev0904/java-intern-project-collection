@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class DistinctSessionReport implements Report {
+
     private static final Logger logger = LoggerFactory.getLogger(DistinctSessionReport.class);
+
     private final Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
 
     @Override

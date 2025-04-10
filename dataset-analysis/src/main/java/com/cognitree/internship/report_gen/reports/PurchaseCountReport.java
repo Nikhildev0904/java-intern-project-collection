@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PurchaseCountReport implements Report {
+
     private static final Logger logger = LoggerFactory.getLogger(PurchaseCountReport.class);
+
     private final Map<Integer, Integer> purchaseCountMap = new HashMap<>();
 
     @Override

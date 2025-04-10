@@ -17,7 +17,7 @@ public class RunnableThreadPool {
         Map<String, Integer> sharedMap = new ConcurrentHashMap<>();
         int numThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
-        logger.info("Starting {} word counter with {} threads",this.getClass().getSimpleName(), numThreads);
+        logger.info("Starting {} word counter with {} threads", this.getClass().getSimpleName(), numThreads);
         int linesPerThread = (lines.size() + numThreads - 1) / numThreads;
         for (int i = 0; i < numThreads; i++) {
             final int threadIndex = i;
@@ -32,7 +32,7 @@ public class RunnableThreadPool {
         }
         executorService.shutdown();
         executorService.awaitTermination(1, TimeUnit.MINUTES);
-        logger.info("All threads finished. Total unique words: {}", sharedMap.size());
+        logger.info("All threads finished computation. Total unique words: {}", sharedMap.size());
         return sharedMap;
     }
 }

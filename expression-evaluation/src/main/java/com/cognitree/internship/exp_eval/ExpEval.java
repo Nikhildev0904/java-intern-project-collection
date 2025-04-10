@@ -13,7 +13,9 @@ import java.util.Set;
 import java.util.Stack;
 
 public class ExpEval {
+
     private static final Logger logger = LoggerFactory.getLogger(ExpEval.class);
+
     private final ExpParser expressionParser;
 
     public ExpEval(String expression) {
@@ -33,8 +35,7 @@ public class ExpEval {
                 stack.push(literalToken.getValue());
             } else if (token instanceof OperatorToken operatorToken) {
                 if (stack.size() < 2) {
-                    logger.error("Insufficient operands for operator {}", operatorToken.getOperator());
-                    throw new RuntimeException("Insufficient Operands");
+                    throw new RuntimeException("Insufficient operands for operator " + operatorToken.getOperator());
                 }
                 double value2 = stack.pop();
                 double value1 = stack.pop();
@@ -44,13 +45,13 @@ public class ExpEval {
                 if (token instanceof VariableToken variableToken) {
                     Double value = variables.get(variableToken.getVarName());
                     if (value == null) {
-                        logger.error("Undefined variable used: {}", variableToken.getVarName());
-                        throw new RuntimeException("Undefined variable: " + variableToken.getVarName());
+                        throw new RuntimeException("Undefined variable used: " + variableToken.getVarName());
                     }
                     stack.push(value);
                 }
             }
         }
+        logger.info("Expression evaluation completed");
         return stack.pop();
     }
 

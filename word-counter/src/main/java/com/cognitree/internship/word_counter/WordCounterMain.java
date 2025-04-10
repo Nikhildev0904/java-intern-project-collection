@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -14,10 +15,10 @@ public class WordCounterMain {
     private static final Logger logger = LoggerFactory.getLogger(WordCounterMain.class);
 
     public static void main(String[] args) {
-        logger.info("Word counter application started");
+        logger.info("Word counter application started with arguments {}", Arrays.toString(args));
         if (args.length < 1) {
-            logger.error("No input file provided.");
-            System.out.println("Usage: java WordCounterMain <inputFile>");
+            logger.warn("No input file provided.");
+            System.out.println("Missing input file.\nUsage: java WordCounterMain <inputFile>");
             return;
         }
         String inputFile = args[0];
@@ -31,11 +32,11 @@ public class WordCounterMain {
         }
         Comparison comparison = new Comparison();
         try {
-            logger.info("Starting comparison of all concurrency methods...");
+            logger.info("Starting comparison of all concurrency methods");
             comparison.compareAll(lines);
             logger.info("Comparison completed successfully.");
         } catch (InterruptedException | ExecutionException e) {
-            logger.info("Unexpected error: {}", e.getMessage());
+            logger.error("Unexpected error: ", e);
         }
     }
 }

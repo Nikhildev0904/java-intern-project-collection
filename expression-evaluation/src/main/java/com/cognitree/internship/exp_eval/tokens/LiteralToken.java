@@ -10,4 +10,11 @@ public class LiteralToken implements OperandToken {
     public double getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return "LiteralToken{" +
+                "value=" + value +
+                '}';
+    }
 }

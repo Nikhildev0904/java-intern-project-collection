@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class AvgQuantityPerSessionReport implements Report {
+
     private static final Logger logger = LoggerFactory.getLogger(AvgQuantityPerSessionReport.class);
+
     private final Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
     private final Map<Integer, Integer> totalQuantityMap = new HashMap<>();
 

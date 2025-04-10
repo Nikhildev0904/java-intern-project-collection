@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class DistinctSessionReport implements Report {
-    private static final Logger log = LoggerFactory.getLogger(DistinctSessionReport.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(DistinctSessionReport.class);
+
     private final Map<Integer, Set<Integer>> distinctSessionMap = new HashMap<>();
 
     @Override
@@ -32,7 +34,7 @@ public class DistinctSessionReport implements Report {
                 bufferedWriter.write(entry.getKey() + "," + entry.getValue().size());
                 bufferedWriter.newLine();
             }
-            log.info("Distinct Sessions Report Generated Successfully");
+            logger.info("Distinct Sessions Report Generated Successfully");
         }
     }
 

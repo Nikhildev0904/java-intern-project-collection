@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 
 public class TwoStackExample {
+
     private static final Logger logger = LoggerFactory.getLogger(TwoStackExample.class);
 
     public static void main(String[] args) {
@@ -16,15 +17,13 @@ public class TwoStackExample {
         twoStacks.pushLeft(7);
         twoStacks.pushRight(8);
         twoStacks.pushLeft(10);
-        System.out.println(twoStacks.sizeLeft());
-        System.out.println(twoStacks.sizeRight());
-        logger.debug("Iterating left stack");
+        logger.debug("Iterating left stack (size={})", twoStacks.sizeLeft());
         Iterator<Integer> leftIterator = twoStacks.getIteratorLeft();
         while (leftIterator.hasNext()) {
             System.out.print(leftIterator.next() + " ");
         }
         System.out.println();
-        logger.debug("Iterating right stack");
+        logger.debug("Iterating right stack (size={})", twoStacks.sizeRight());
         Iterator<Integer> rightIterator = twoStacks.getIteratorRight();
         while (rightIterator.hasNext()) {
             System.out.print(rightIterator.next() + " ");

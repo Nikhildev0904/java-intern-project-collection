@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class AvgQuantityPerDayReport implements Report {
 
-    private static final Logger log = LoggerFactory.getLogger(AvgQuantityPerDayReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(AvgQuantityPerDayReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -64,7 +64,7 @@ public class AvgQuantityPerDayReport implements Report {
                 }
             }
         }
-        log.info("Avg Quantity Per Day of Week Report Generated Successfully");
+        logger.info("Avg Quantity Per Day of Week Report Generated Successfully");
     }
 
     private static class Pair {
@@ -76,5 +76,4 @@ public class AvgQuantityPerDayReport implements Report {
             this.totalQuantity = totalQuantity;
         }
     }
-
 }

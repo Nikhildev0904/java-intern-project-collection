@@ -11,7 +11,9 @@ import java.util.Stack;
 import java.util.HashSet;
 
 public class ExpParser {
+
     private static final Logger logger = LoggerFactory.getLogger(ExpParser.class);
+
     private final List<Token> parsedExpression;
 
     public ExpParser(String expression) {
@@ -25,7 +27,7 @@ public class ExpParser {
                 variables.add(variableToken.getVarName());
             }
         }
-        logger.info("Extracted variables: {}", variables);
+        logger.debug("Extracted variables: {}", variables);
         return variables;
     }
 
@@ -35,14 +37,8 @@ public class ExpParser {
 
     private List<Token> parseExpression(String expression) throws RuntimeException {
         logger.info("Initializing parser for expression: {}", expression);
-        List<Token> parsedExpression;
-        try {
-            List<Token> tokenisedExpression = tokeniseExpression(expression);
-            parsedExpression = convertInfixToPostfix(tokenisedExpression);
-        } catch (RuntimeException e) {
-            logger.error("Error while parsing expression: {}", expression, e);
-            throw new RuntimeException(e);
-        }
+        List<Token> tokenisedExpression = tokeniseExpression(expression);
+        List<Token> parsedExpression = convertInfixToPostfix(tokenisedExpression);
         return parsedExpression;
     }
 
@@ -72,8 +68,7 @@ public class ExpParser {
                 tokens.add(new OperatorToken(character));
                 i++;
             } else {
-                logger.error("Invalid character '{}' in expression", character);
-                throw new RuntimeException("Please provide valid Input");
+                throw new RuntimeException("Invalid character " + character + " in expression");
             }
         }
         return tokens;
@@ -123,5 +118,4 @@ public class ExpParser {
         return operator == '+' || operator == '-' || operator == '*'
                 || operator == '/' || operator == '^' || operator == '(' || operator == ')';
     }
-
 }

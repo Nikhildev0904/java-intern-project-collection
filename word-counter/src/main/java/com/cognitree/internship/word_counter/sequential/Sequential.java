@@ -13,7 +13,9 @@ public class Sequential {
     private static final Logger logger = LoggerFactory.getLogger(Sequential.class);
 
     public Map<String, Integer> getWordCount(List<String> lines) {
-        logger.info("Starting {} word counter",this.getClass().getSimpleName());
-        return processLines(lines, 0, lines.size());
+        logger.info("Starting {} word counter", this.getClass().getSimpleName());
+        Map<String, Integer> wordCountMap = processLines(lines, 0, lines.size());
+        logger.info("Finished Computation. Total unique words: {}", wordCountMap.size());
+        return wordCountMap;
     }
 }

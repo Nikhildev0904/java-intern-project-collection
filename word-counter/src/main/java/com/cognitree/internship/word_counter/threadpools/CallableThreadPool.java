@@ -20,7 +20,7 @@ public class CallableThreadPool {
         int numThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
         int linesPerThread = (lines.size() + numThreads - 1) / numThreads;
-        logger.info("Starting {} word counter with {} threads",this.getClass().getSimpleName(), numThreads);
+        logger.info("Starting {} word counter with {} threads", this.getClass().getSimpleName(), numThreads);
         List<Future<Map<String, Integer>>> futures = new ArrayList<>();
         for (int i = 0; i < numThreads; i++) {
             final int threadIndex = i;
@@ -35,7 +35,7 @@ public class CallableThreadPool {
             localMap.forEach((word, count) -> wordCountMap.merge(word, count, Integer::sum));
         }
         executorService.shutdown();
-        logger.info("All threads finished. Total unique words: {}", wordCountMap.size());
+        logger.info("All threads finished computation. Total unique words: {}", wordCountMap.size());
         return wordCountMap;
     }
 }

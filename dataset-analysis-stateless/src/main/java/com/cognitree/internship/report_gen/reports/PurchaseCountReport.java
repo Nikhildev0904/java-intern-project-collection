@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class PurchaseCountReport implements Report {
 
-    private static final Logger log = LoggerFactory.getLogger(PurchaseCountReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseCountReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -49,6 +49,6 @@ public class PurchaseCountReport implements Report {
                 bufferedWriter.newLine();
             }
         }
-        log.info("Purchase Count Report Generated Successfully");
+        logger.info("Purchase Count Report Generated Successfully");
     }
 }

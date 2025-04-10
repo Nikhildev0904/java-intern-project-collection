@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class BatchedIterator<T> implements Iterator<List<T>> {
+
     private static final Logger logger = LoggerFactory.getLogger(BatchedIterator.class);
+
     private final Iterator<T> iterator;
     private final int batchSize;
 
@@ -24,8 +26,7 @@ public class BatchedIterator<T> implements Iterator<List<T>> {
     @Override
     public List<T> next() {
         if (!hasNext()) {
-            logger.error("next() called but no more elements available.");
-            throw new NoSuchElementException("No elements left");
+            throw new NoSuchElementException("next() called but no more elements available");
         }
         List<T> batch = new ArrayList<>(batchSize);
         int count = 0;

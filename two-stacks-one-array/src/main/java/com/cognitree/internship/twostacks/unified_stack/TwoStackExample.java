@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TwoStackExample {
-    private static final Logger logger = LoggerFactory.getLogger(TwoStackExample.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(TwoStackExample.class);
 
     public static void main(String[] args) {
         logger.info("TwoStackExample Application started");
@@ -17,14 +17,12 @@ public class TwoStackExample {
         leftStack.push(7);
         rightStack.push(8);
         leftStack.push(10);
-        System.out.println(leftStack.size());
-        System.out.println(rightStack.size());
-        logger.debug("Iterating left stack");
+        logger.debug("Iterating left stack (size={})", leftStack.size());
         for (Integer i : leftStack) {
             System.out.print(i + " ");
         }
         System.out.println();
-        logger.debug("Iterating right stack");
+        logger.debug("Iterating right stack (size={})", rightStack.size());
         for (Integer i : rightStack) {
             System.out.print(i + " ");
         }

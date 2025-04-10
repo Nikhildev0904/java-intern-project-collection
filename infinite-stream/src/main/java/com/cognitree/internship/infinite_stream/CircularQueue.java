@@ -12,8 +12,9 @@ import java.util.NoSuchElementException;
  * @param <T> - Generic type
  */
 public class CircularQueue<T> implements Iterable<T> {
-    private static final Logger logger = LoggerFactory.getLogger(CircularQueue.class);
+
     private final T[] array;
+
     private int index;
     private int length;
 
@@ -62,9 +63,8 @@ public class CircularQueue<T> implements Iterable<T> {
 
             @Override
             public T next() {
-                if(!hasNext()){
-                    logger.error("next() method called without any elements in the queue");
-                    throw new NoSuchElementException("Empty queue");
+                if (!hasNext()) {
+                    throw new NoSuchElementException("next() method called without any elements in the queue");
                 }
                 T value = array[head];
                 head = (head + 1) % array.length;
@@ -73,6 +73,4 @@ public class CircularQueue<T> implements Iterable<T> {
             }
         };
     }
-
-
 }

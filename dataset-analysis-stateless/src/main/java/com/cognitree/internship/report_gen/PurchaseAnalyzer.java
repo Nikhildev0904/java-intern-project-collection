@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.ServiceLoader;
 
 public class PurchaseAnalyzer {
@@ -11,7 +12,7 @@ public class PurchaseAnalyzer {
     private static final Logger logger = LoggerFactory.getLogger(PurchaseAnalyzer.class);
 
     public static void main(String[] args) {
-        logger.info("Application started with {}", (Object) args);
+        logger.info("Purchase data Report generator application started with {}", Arrays.toString(args));
         if (args.length < 1) {
             logger.warn("No arguments provided");
             printUsage();
@@ -23,7 +24,7 @@ public class PurchaseAnalyzer {
             return;
         }
         if (!"generate".equalsIgnoreCase(command) || args.length < 4) {
-            logger.error("Invalid command or insufficient arguments: {}", (Object) args);
+            logger.warn("Invalid command or insufficient arguments: {}", Arrays.toString(args));
             printUsage();
             return;
         }
@@ -36,7 +37,7 @@ public class PurchaseAnalyzer {
             ReportManager reportManager = new ReportManager(inputFile, outputDir);
             if ("all".equalsIgnoreCase(args[1])) {
                 if (args.length > 4) {
-                    logger.error("Invalid usage with 'all' command, Too many arguments.");
+                    logger.warn("Invalid usage with 'all' command, Too many arguments.");
                     printUsage();
                     return;
                 }
@@ -49,13 +50,14 @@ public class PurchaseAnalyzer {
                 logger.info("Selected reports generated successfully.");
             }
         } catch (IllegalArgumentException e) {
-            logger.error("Validation failed: {}", e.getMessage());
+            logger.error("Validation failed: ", e);
         } catch (Exception e) {
             logger.error("Unexpected error occurred: ", e);
         }
     }
 
     private static void printUsage() {
+        System.out.println("Invalid Input,");
         System.out.println("Use:");
         System.out.println("  To list reports:");
         System.out.println("    java PurchaseAnalyzer listreports");

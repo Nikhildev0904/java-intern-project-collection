@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AvgQuantityPerDayReport implements Report {
+
     private static final Logger logger = LoggerFactory.getLogger(AvgQuantityPerDayReport.class);
+
     private final Map<DayOfWeek, Map<Integer, Pair>> quantityPerDayMap = new HashMap<>();
 
     @Override

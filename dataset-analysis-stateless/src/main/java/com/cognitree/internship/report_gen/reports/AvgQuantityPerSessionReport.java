@@ -15,7 +15,7 @@ import java.util.*;
 
 public class AvgQuantityPerSessionReport implements Report {
 
-    private static final Logger log = LoggerFactory.getLogger(AvgQuantityPerSessionReport.class);
+    private static final Logger logger = LoggerFactory.getLogger(AvgQuantityPerSessionReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -58,6 +58,6 @@ public class AvgQuantityPerSessionReport implements Report {
                 bufferedWriter.newLine();
             }
         }
-        log.info("Average Quantity Per Session Report Generated Successfully");
+        logger.info("Average Quantity Per Session Report Generated Successfully");
     }
 }

@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class ReportManager {
+
     private static final Logger logger = LoggerFactory.getLogger(ReportManager.class);
+
     private final Map<String, Report> reports = new HashMap<>();
     private final String inputFile;
     private final String outputDir;
@@ -28,7 +30,7 @@ public class ReportManager {
 
     public void generateReport(String reportName) throws IOException {
         if (!reports.containsKey(reportName)) {
-            logger.info("Invalid report named '{}'", reportName);
+            logger.warn("Invalid report named '{}'", reportName);
             return;
         }
         initializeReport(reportName);

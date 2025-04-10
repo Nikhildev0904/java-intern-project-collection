@@ -20,7 +20,7 @@ public class CallableThread {
         int numThreads = Runtime.getRuntime().availableProcessors();
         List<FutureTask<Map<String, Integer>>> tasks = new ArrayList<>();
         Thread[] threads = new Thread[numThreads];
-        logger.info("Starting {} word counter with {} threads",this.getClass().getSimpleName(), numThreads);
+        logger.info("Starting {} word counter with {} threads", this.getClass().getSimpleName(), numThreads);
         int linesPerThread = (lines.size() + numThreads - 1) / numThreads;
         for (int i = 0; i < numThreads; i++) {
             final int threadIndex = i;
@@ -41,7 +41,7 @@ public class CallableThread {
             Map<String, Integer> localMap = task.get();
             localMap.forEach((word, count) -> wordCountMap.merge(word, count, Integer::sum));
         }
-        logger.info("All threads finished. Total unique words: {}", wordCountMap.size());
+        logger.info("All threads finished computation. Total unique words: {}", wordCountMap.size());
         return wordCountMap;
     }
 }
