@@ -1,13 +1,19 @@
 package com.cognitree.internship.twostacks.type_checked;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 
 public class TwoStacks<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(TwoStacks.class);
+
+    private final T[] array;
     private final LeftStack leftStack;
     private final RightStack rightStack;
-    private final T[] array;
 
     public enum StackType {LEFT, RIGHT}
 
@@ -15,6 +21,7 @@ public class TwoStacks<T> {
         array = (T[]) new Object[size];
         leftStack = new LeftStack();
         rightStack = new RightStack();
+        logger.info("Initialized twostacks with size: {}", size);
     }
 
     public void push(T element, StackType type) {
@@ -123,7 +130,7 @@ public class TwoStacks<T> {
                 @Override
                 public T next() {
                     if (!hasNext()) {
-                        throw new NoSuchElementException("Left stack is empty");
+                        throw new NoSuchElementException("next() called but no more elements available in the left stack");
                     }
                     return array[current--];
                 }
@@ -180,7 +187,7 @@ public class TwoStacks<T> {
                 @Override
                 public T next() {
                     if (!hasNext()) {
-                        throw new NoSuchElementException("Right stack is empty");
+                        throw new NoSuchElementException("next() called but no more elements available in the right stack");
                     }
                     return array[current++];
                 }

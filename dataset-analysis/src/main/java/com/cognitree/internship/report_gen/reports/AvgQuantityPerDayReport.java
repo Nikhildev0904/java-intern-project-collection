@@ -1,7 +1,10 @@
 package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
+import com.cognitree.internship.report_gen.PurchaseAnalyzer;
 import com.cognitree.internship.report_gen.Report;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -11,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AvgQuantityPerDayReport implements Report {
+
+    private static final Logger logger = LoggerFactory.getLogger(AvgQuantityPerDayReport.class);
+
     private final Map<DayOfWeek, Map<Integer, Pair>> quantityPerDayMap = new HashMap<>();
 
     @Override
@@ -31,7 +37,7 @@ public class AvgQuantityPerDayReport implements Report {
                     writer.newLine();
                 }
             }
-            System.out.println("Avg Quantity Per Day of Week Report Generated Successfully");
+            logger.info("Avg Quantity Per Day of Week Report Generated Successfully");
         }
     }
 

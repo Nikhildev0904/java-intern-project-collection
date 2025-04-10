@@ -1,9 +1,15 @@
 package com.cognitree.internship.report_gen;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.*;
 
 public class ReportManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReportManager.class);
+
     private final Map<String, Report> reports = new HashMap<>();
     private final List<BuyRecord> records;
     private final String outputDir;
@@ -16,6 +22,7 @@ public class ReportManager {
     }
 
     public void generateAllReports() throws IOException {
+        logger.info("Generating all reports");
         initializeReport("");
         for (Report report : reports.values()) {
             report.generateReport(outputDir);
@@ -24,7 +31,7 @@ public class ReportManager {
 
     public void generateReport(String reportName) throws IOException {
         if (!reports.containsKey(reportName)) {
-            System.out.println("Invalid report named '" + reportName + "'");
+            logger.warn("Invalid report named '{}'", reportName);
             return;
         }
         initializeReport(reportName);
@@ -33,6 +40,7 @@ public class ReportManager {
     }
 
     private void loadReports() {
+        logger.info("Loading all reports using service loader");
         ServiceLoader<Report> serviceLoader = ServiceLoader.load(Report.class);
         for (Report report : serviceLoader) {
             reports.put(report.getName(), report);
@@ -40,6 +48,7 @@ public class ReportManager {
     }
 
     private void initializeReport(String reportName) {
+        logger.info("initializing report(s) with data");
         Report report = reports.get(reportName);
         if (reportName.isEmpty()) {
             for (Report eachReport : reports.values()) {

@@ -2,6 +2,8 @@ package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
 import com.cognitree.internship.report_gen.Report;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AvgQuantityPerDayReport implements Report {
+
+    private static final Logger logger = LoggerFactory.getLogger(AvgQuantityPerDayReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -60,7 +64,7 @@ public class AvgQuantityPerDayReport implements Report {
                 }
             }
         }
-        System.out.println("Avg Quantity Per Day of Week Report Generated Successfully");
+        logger.info("Avg Quantity Per Day of Week Report Generated Successfully");
     }
 
     private static class Pair {
@@ -72,5 +76,4 @@ public class AvgQuantityPerDayReport implements Report {
             this.totalQuantity = totalQuantity;
         }
     }
-
 }

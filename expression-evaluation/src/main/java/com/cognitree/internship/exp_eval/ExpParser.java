@@ -1,6 +1,8 @@
 package com.cognitree.internship.exp_eval;
 
 import com.cognitree.internship.exp_eval.tokens.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,9 @@ import java.util.Stack;
 import java.util.HashSet;
 
 public class ExpParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExpParser.class);
+
     private final List<Token> parsedExpression;
 
     public ExpParser(String expression) {
@@ -22,6 +27,7 @@ public class ExpParser {
                 variables.add(variableToken.getVarName());
             }
         }
+        logger.debug("Extracted variables: {}", variables);
         return variables;
     }
 
@@ -30,13 +36,9 @@ public class ExpParser {
     }
 
     private List<Token> parseExpression(String expression) throws RuntimeException {
-        List<Token> parsedExpression;
-        try {
-            List<Token> tokenisedExpression = tokeniseExpression(expression);
-            parsedExpression = convertInfixToPostfix(tokenisedExpression);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
+        logger.info("Initializing parser for expression: {}", expression);
+        List<Token> tokenisedExpression = tokeniseExpression(expression);
+        List<Token> parsedExpression = convertInfixToPostfix(tokenisedExpression);
         return parsedExpression;
     }
 
@@ -66,8 +68,7 @@ public class ExpParser {
                 tokens.add(new OperatorToken(character));
                 i++;
             } else {
-                System.out.println("Wrong Input");
-                throw new RuntimeException("Please provide valid Input");
+                throw new RuntimeException("Invalid character " + character + " in expression");
             }
         }
         return tokens;
@@ -117,5 +118,4 @@ public class ExpParser {
         return operator == '+' || operator == '-' || operator == '*'
                 || operator == '/' || operator == '^' || operator == '(' || operator == ')';
     }
-
 }

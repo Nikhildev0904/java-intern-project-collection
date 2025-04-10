@@ -1,9 +1,16 @@
 package com.cognitree.internship.iterators;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 public class CircularQueue<T> implements Iterable<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(CircularQueue.class);
+
     private final T[] array;
+
     private int index;
     private int length;
 
@@ -11,6 +18,7 @@ public class CircularQueue<T> implements Iterable<T> {
         this.array = (T[]) new Object[size];
         this.index = -1;
         this.length = 0;
+        logger.info("CircularQueue initialized with size {}", size);
     }
 
     public final void slide(T element) {

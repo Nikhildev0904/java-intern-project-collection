@@ -10,4 +10,11 @@ public class OperatorToken implements Token {
     public char getOperator() {
         return operator;
     }
+
+    @Override
+    public String toString() {
+        return "OperatorToken{" +
+                "operator=" + operator +
+                '}';
+    }
 }

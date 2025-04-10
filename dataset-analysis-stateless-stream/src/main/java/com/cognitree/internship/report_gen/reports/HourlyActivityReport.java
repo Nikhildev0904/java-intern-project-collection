@@ -2,6 +2,8 @@ package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
 import com.cognitree.internship.report_gen.Report;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -11,6 +13,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class HourlyActivityReport implements Report {
+
+    private static final Logger logger = LoggerFactory.getLogger(HourlyActivityReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -83,6 +87,6 @@ public class HourlyActivityReport implements Report {
                 writer.newLine();
             }
         }
-        System.out.println("Hourly Activity Report Generated Successfully");
+        logger.info("Hourly Activity Report Generated Successfully");
     }
 }

@@ -2,6 +2,8 @@ package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
 import com.cognitree.internship.report_gen.Report;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -13,6 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class HourlyActivityReport implements Report {
+
+    private static final Logger logger = LoggerFactory.getLogger(HourlyActivityReport.class);
+
     private final Map<Integer, Map<LocalDate, Set<Integer>>> hourlySessions = new HashMap<>();
     private final Map<Integer, Map<LocalDate, Set<Integer>>> hourlyItems = new HashMap<>();
 
@@ -45,8 +50,8 @@ public class HourlyActivityReport implements Report {
                 writer.write(hour + "," + avgSessions + "," + avgItems);
                 writer.newLine();
             }
+            logger.info("Hourly Activity Report Generated Successfully");
         }
-        System.out.println("Hourly Activity Report Generated Successfully");
     }
 
     @Override

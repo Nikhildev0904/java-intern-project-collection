@@ -1,9 +1,15 @@
 package com.cognitree.internship.report_gen;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.*;
 
 public class PurchaseDataParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseDataParser.class);
+
     private final List<BuyRecord> records;
 
     public PurchaseDataParser(String path) throws IOException {
@@ -16,6 +22,7 @@ public class PurchaseDataParser {
     }
 
     private void parseRawData(String path) throws IOException {
+        logger.info("Parsing the input file: {}", path);
         try (FileInputStream fileInputStream = new FileInputStream(path);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream))) {
             String line;

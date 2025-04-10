@@ -2,6 +2,8 @@ package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
 import com.cognitree.internship.report_gen.Report;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -13,6 +15,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class DistinctSessionReport implements Report {
+
+    private static final Logger logger = LoggerFactory.getLogger(DistinctSessionReport.class);
 
     @Override
     public void generateReport(List<BuyRecord> records, String outputDir) throws IOException {
@@ -42,6 +46,6 @@ public class DistinctSessionReport implements Report {
                 bufferedWriter.newLine();
             }
         }
-        System.out.println("Distinct Sessions Report Generated Successfully");
+        logger.info("Distinct Sessions Report Generated Successfully");
     }
 }

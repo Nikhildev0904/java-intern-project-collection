@@ -7,7 +7,9 @@ import java.util.concurrent.RecursiveAction;
 import static com.cognitree.internship.word_counter.LineProcessor.processLines;
 
 public class WordCountRecursiveAction extends RecursiveAction {
+
     private static final int minLines = 250000;
+
     private final List<String> lines;
     private final Map<String, Integer> sharedMap;
     private final int start;

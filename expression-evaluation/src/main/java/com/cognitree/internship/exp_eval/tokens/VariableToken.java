@@ -10,4 +10,11 @@ public class VariableToken implements OperandToken {
     public String getVarName() {
         return varName;
     }
+
+    @Override
+    public String toString() {
+        return "VariableToken{" +
+                "varName='" + varName + '\'' +
+                '}';
+    }
 }

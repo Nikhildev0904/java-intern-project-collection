@@ -1,12 +1,20 @@
 package com.cognitree.internship.report_gen;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
+import java.util.Arrays;
 import java.util.ServiceLoader;
 
 public class PurchaseAnalyzer {
 
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseAnalyzer.class);
+
     public static void main(String[] args) {
+        logger.info("Purchase data Report generator application started with {}", Arrays.toString(args));
         if (args.length < 1) {
+            logger.warn("No arguments provided");
             printUsage();
             return;
         }
@@ -16,7 +24,7 @@ public class PurchaseAnalyzer {
             return;
         }
         if (!"generate".equalsIgnoreCase(command) || args.length < 4) {
-            System.out.println("Error: Invalid command or missing arguments.");
+            logger.warn("Invalid command or insufficient arguments: {}", Arrays.toString(args));
             printUsage();
             return;
         }
@@ -25,28 +33,31 @@ public class PurchaseAnalyzer {
         try {
             validateInputFile(inputFile);
             validateOutputDir(outputDir);
+            logger.info("Input file and output directory validated");
             ReportManager reportManager = new ReportManager(inputFile, outputDir);
             if ("all".equalsIgnoreCase(args[1])) {
                 if (args.length > 4) {
-                    System.out.println("Error: Invalid usage");
+                    logger.warn("Invalid usage with 'all' command, Too many arguments.");
                     printUsage();
                     return;
                 }
                 reportManager.generateAllReports();
-                System.out.println("All reports generated successfully.");
+                logger.info("All reports generated successfully.");
             } else {
                 for (int i = 1; i < args.length - 2; i++) {
                     reportManager.generateReport(args[i]);
                 }
+                logger.info("Selected reports generated successfully.");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+            logger.error("Validation failed: ", e);
         } catch (Exception e) {
-            System.out.println("Unexpected error: " + e.getMessage());
+            logger.error("Unexpected error occurred: ", e);
         }
     }
 
     private static void printUsage() {
+        System.out.println("Invalid Input,");
         System.out.println("Use:");
         System.out.println("  To list reports:");
         System.out.println("    java PurchaseAnalyzer listreports");
