@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExpEvalTest {
 
     @Test
-    void checkIfGetVariablesReturnsCorrectSet() {
-        ExpParser parser = new ExpParser("(a+b)*2+d*c+10");
-        Set<String> variables = parser.extractVariables();
+    void testExtractVariablesReturnsCorrectSet() {
+        ExpEval evaluator = new ExpEval("(a+b)*2+d*c+10");
+        Set<String> variables = evaluator.getVariables();
         assertEquals(4, variables.size());
         assertTrue(variables.contains("a"));
         assertTrue(variables.contains("b"));
@@ -22,7 +22,7 @@ class ExpEvalTest {
     }
 
     @Test
-    void checkIfCalculateReturnsCorrectResult() {
+    void testCalculateReturnsCorrectResult() {
         ExpEval evaluator = new ExpEval("(a+b)*2+d*c+10");
         Map<String, Double> variables = new HashMap<>();
         variables.put("a", 2.0);
@@ -34,7 +34,7 @@ class ExpEvalTest {
 
 
     @Test
-    void checkIfCalculateThrowsExceptionWhenInsufficientOperands() {
+    void testCalculateThrowsExceptionForInsufficientOperands() {
         ExpEval evaluator = new ExpEval("(a+b)*2+d*c+");
         Map<String, Double> variables = new HashMap<>();
         variables.put("a", 2.0);
@@ -45,7 +45,7 @@ class ExpEvalTest {
     }
 
     @Test
-    void checkIfCalculateThrowsExceptionWhenUndefinedVariableUsed() {
+    void testCalculateThrowsExceptionForUndefinedVariable() {
         ExpEval evaluator = new ExpEval("(a+b)*2+d*c*10");
         Map<String, Double> variables = new HashMap<>();
         variables.put("a", 2.0);
@@ -55,7 +55,7 @@ class ExpEvalTest {
     }
 
     @Test
-    void checkIfCalculateHandlesZeroDivision() {
+    void testCalculateThrowsArithmeticExceptionForZeroDivision() {
         ExpEval evaluator = new ExpEval("a/b");
         Map<String, Double> variables = new HashMap<>();
         variables.put("a", 2.0);
@@ -64,7 +64,7 @@ class ExpEvalTest {
     }
 
     @Test
-    void checkIfNestedExpressionsAreEvaluatedCorrectly() {
+    void testCalculateHandlesNestedExpressionsCorrectly() {
         ExpEval evaluator = new ExpEval("((a+b)*c)^d");
         Map<String, Double> variables = new HashMap<>();
         variables.put("a", 1.0);
@@ -75,7 +75,7 @@ class ExpEvalTest {
     }
 
     @Test
-    void checkIfNegativeNumbersAreHandledCorrectly() {
+    void testCalculateHandlesNegativeNumbersCorrectly() {
         ExpEval evaluator = new ExpEval("a-b*c");
         Map<String, Double> variables = new HashMap<>();
         variables.put("a", -2.0);
@@ -85,7 +85,7 @@ class ExpEvalTest {
     }
 
     @Test
-    void checkIfParenthesesAffectPrecedenceCorrectly() {
+    void testParenthesesAffectOperatorPrecedenceCorrectly() {
         ExpEval evaluator1 = new ExpEval("a+b*c");
         ExpEval evaluator2 = new ExpEval("(a+b)*c");
         Map<String, Double> variables = new HashMap<>();

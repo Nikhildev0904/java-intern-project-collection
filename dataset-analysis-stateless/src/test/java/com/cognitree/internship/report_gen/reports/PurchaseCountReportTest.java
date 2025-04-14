@@ -1,12 +1,15 @@
 package com.cognitree.internship.report_gen.reports;
 
 import com.cognitree.internship.report_gen.BuyRecord;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +17,19 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PurchaseCountReportTest {
+
+    private final File outputDir = Path.of("reports", "temp").toFile();
+
+    @BeforeEach
+    void cleanOutputDir() {
+        if (outputDir.exists()) {
+            for (File file : Objects.requireNonNull(outputDir.listFiles())) {
+                file.delete();
+            }
+        } else {
+            outputDir.mkdirs();
+        }
+    }
 
     @Test
     void testGenerateReport() throws IOException {
@@ -23,17 +39,10 @@ class PurchaseCountReportTest {
         records.add(new BuyRecord(2, "2022-01-01T01:00:00Z", 101, 20, 2));
         records.add(new BuyRecord(3, "2022-01-02T00:00:00Z", 201, 30, 3));
         records.add(new BuyRecord(4, "2022-01-02T01:00:00Z", 201, 40, 4));
-        File outputDir = new File("reports/temp/");
-        if (outputDir.exists()) {
-            for (File file : Objects.requireNonNull(outputDir.listFiles())) {
-                file.delete();
-            }
-        } else {
-            outputDir.mkdirs();
-        }
-        purchaseCountReport.generateReport(records, "reports/temp/");
-        assertTrue(new File("reports/temp/report_purchase_count.csv").exists());
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("reports/temp/report_purchase_count.csv"))) {
+        purchaseCountReport.generateReport(records, outputDir.getAbsolutePath());
+        assertTrue(new File(String.valueOf(Path.of(outputDir.toURI()).resolve("report_purchase_count.csv"))).exists());
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(String.valueOf(Path.of(outputDir.toURI())
+                .resolve("report_purchase_count.csv"))))) {
             String line = bufferedReader.readLine();
             assertEquals("ItemId,PurchaseEventCount", line);
             line = bufferedReader.readLine();
@@ -49,5 +58,13 @@ class PurchaseCountReportTest {
     void testGetName() {
         PurchaseCountReport purchaseCountReport = new PurchaseCountReport();
         assertEquals("purchase_count", purchaseCountReport.getName());
+    }
+
+    @AfterEach
+    void deleteGeneratedReports() {
+        for (File file : Objects.requireNonNull(outputDir.listFiles())) {
+            file.delete();
+        }
+        outputDir.delete();
     }
 }

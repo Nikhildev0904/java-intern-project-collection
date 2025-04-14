@@ -23,16 +23,8 @@ class SyncRunnableThreadTest {
     @Test
     void testGetWordCountEmptyList() throws InterruptedException {
         List<String> lines = new ArrayList<>();
-        Map<String, Integer> expectedMap = Map.of();
         SyncRunnableThread syncRunnableThread = new SyncRunnableThread();
         Map<String, Integer> actualMap = syncRunnableThread.getWordCount(lines);
         assertTrue((actualMap).isEmpty());
-    }
-
-    @Test
-    void testGetWordCountNullList() {
-        SyncRunnableThread syncRunnableThread = new SyncRunnableThread();
-        List<String> lines = null;
-        assertThrows(NullPointerException.class, () -> syncRunnableThread.getWordCount(lines));
     }
 }

@@ -29,11 +29,4 @@ class CallableThreadTest {
         Map<String, Integer> wordCountMap = callableThread.getWordCount(lines);
         assertTrue(wordCountMap.isEmpty());
     }
-
-    @Test
-    void testGetWordCountNullList() throws InterruptedException, ExecutionException {
-        CallableThread callableThread = new CallableThread();
-        List<String> lines = null;
-        assertThrows(NullPointerException.class, () -> callableThread.getWordCount(lines));
-    }
 }

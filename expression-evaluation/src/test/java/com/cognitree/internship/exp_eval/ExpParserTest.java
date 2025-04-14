@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExpParserTest {
 
     @Test
-    void checkIfExtractVariablesReturnsCorrectSet() {
+    void testExtractVariablesReturnsCorrectSet() {
         ExpParser parser = new ExpParser("(a+bc)*2+d*c+10");
         Set<String> variables = parser.extractVariables();
         assertEquals(4, variables.size());
@@ -22,7 +22,7 @@ class ExpParserTest {
     }
 
     @Test
-    void getParsedExpressionReturnsCorrectTokensList() {
+    void testGetParsedExpressionReturnsCorrectTokensList() {
         ExpParser parser = new ExpParser("(a+b)*2+d");
         List<Token> parsedExpression = parser.getParsedExpression();
         assertEquals(7, parsedExpression.size());
@@ -32,12 +32,12 @@ class ExpParserTest {
     }
 
     @Test
-    void checkIfGetParseExpressionThrowsExceptionWhenInvalidOperatorInExpression() {
+    void testGetParseExpressionThrowsExceptionWhenInvalidOperatorInExpression() {
         assertThrows(RuntimeException.class, () -> new ExpParser("(a+b)&2+d*"));
     }
 
     @Test
-    void checkIfGetParseExpressionThrowsExceptionWhenInvalidNumberInExpression() {
+    void testGetParseExpressionThrowsExceptionWhenInvalidNumberInExpression() {
         assertThrows(RuntimeException.class, () -> new ExpParser("(a+b)*2+d*.1.2"));
     }
 }

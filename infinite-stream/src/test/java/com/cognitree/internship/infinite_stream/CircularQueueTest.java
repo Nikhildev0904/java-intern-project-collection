@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CircularQueueTest {
 
     @Test
-    void enqueueReturnsNullWhenQueueNotNullAndIncrementsLength() {
+    void testEnqueueAddsElementWhenSpaceAvailable() {
         CircularQueue<Integer> queue = new CircularQueue<>(2);
         assertNull(queue.enqueue(1));
         assertEquals(1, queue.getLength());
@@ -19,7 +19,7 @@ class CircularQueueTest {
     }
 
     @Test
-    void enqueueOverwritesOldValueWhenQueueFullAndReturnsIt() {
+    void testEnqueueOverwritesOldestElementWhenFull() {
         CircularQueue<Integer> queue = new CircularQueue<>(2);
         queue.enqueue(1);
         queue.enqueue(3);
@@ -29,7 +29,7 @@ class CircularQueueTest {
     }
 
     @Test
-    void iteratorReturnsCorrectValues() {
+    void testIteratorTraversesElementsInOrder() {
         CircularQueue<Integer> queue = new CircularQueue<>(3);
         queue.enqueue(1);
         queue.enqueue(3);
@@ -44,7 +44,18 @@ class CircularQueueTest {
     }
 
     @Test
-    void iteratorThrowsExceptionWhenQueueEmpty() {
+    void testIteratorOnPartiallyFilledQueue() {
+        CircularQueue<Integer> queue = new CircularQueue<>(3);
+        queue.enqueue(10);
+        Iterator<Integer> iterator = queue.iterator();
+        assertTrue(iterator.hasNext());
+        assertEquals(10, iterator.next());
+        assertFalse(iterator.hasNext());
+    }
+
+
+    @Test
+    void testIteratorThrowsExceptionWhenNoMoreElements() {
         CircularQueue<Integer> queue = new CircularQueue<>(2);
         queue.enqueue(1);
         queue.enqueue(3);

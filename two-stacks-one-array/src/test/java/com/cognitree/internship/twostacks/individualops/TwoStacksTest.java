@@ -9,7 +9,7 @@ import static org.testng.Assert.*;
 public class TwoStacksTest {
     @Test
     public void testPushPopPeekLeft() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(1);
         twoStacks.pushLeft("A");
         assertEquals(twoStacks.peekLeft(), "A");
         assertEquals(twoStacks.popLeft(), "A");
@@ -18,7 +18,7 @@ public class TwoStacksTest {
 
     @Test
     public void testPushPopPeekRight() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(1);
         twoStacks.pushRight("A");
         assertEquals(twoStacks.peekRight(), "A");
         assertEquals(twoStacks.popRight(), "A");
@@ -27,7 +27,7 @@ public class TwoStacksTest {
 
     @Test
     public void testSizeLeft() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(2);
         assertEquals(twoStacks.sizeLeft(), 0);
         twoStacks.pushLeft("A");
         assertEquals(twoStacks.sizeLeft(), 1);
@@ -37,7 +37,7 @@ public class TwoStacksTest {
 
     @Test
     public void testSizeRight() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(2);
         assertEquals(twoStacks.sizeRight(), 0);
         twoStacks.pushRight("A");
         assertEquals(twoStacks.sizeRight(), 1);
@@ -69,7 +69,7 @@ public class TwoStacksTest {
 
     @Test
     public void testIsEmptyLeft() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(1);
         assertTrue(twoStacks.isEmptyLeft());
         twoStacks.pushLeft("A");
         assertFalse(twoStacks.isEmptyLeft());
@@ -79,7 +79,7 @@ public class TwoStacksTest {
 
     @Test
     public void testIsEmptyRight() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(1);
         assertTrue(twoStacks.isEmptyRight());
         twoStacks.pushRight("A");
         assertFalse(twoStacks.isEmptyRight());
@@ -89,7 +89,7 @@ public class TwoStacksTest {
 
     @Test
     public void testSizeLeftRight() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(2);
         assertEquals(twoStacks.sizeLeft(), 0);
         assertEquals(twoStacks.sizeRight(), 0);
         twoStacks.pushLeft("A");
@@ -102,7 +102,7 @@ public class TwoStacksTest {
 
     @Test
     public void testGetIteratorLeft() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(2);
         twoStacks.pushLeft("A");
         twoStacks.pushLeft("B");
         Iterator<String> iterator = twoStacks.getIteratorLeft();
@@ -113,7 +113,7 @@ public class TwoStacksTest {
 
     @Test
     public void testGetIteratorRight() {
-        TwoStacks<String> twoStacks = new TwoStacks<>(10);
+        TwoStacks<String> twoStacks = new TwoStacks<>(2);
         twoStacks.pushRight("A");
         twoStacks.pushRight("B");
         Iterator<String> iterator = twoStacks.getIteratorRight();

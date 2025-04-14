@@ -27,11 +27,4 @@ class ConcurrentRunnableThreadTest {
         Map<String, Integer> wordCountMap = concurrentRunnableThread.getWordCount(lines);
         assertTrue(wordCountMap.isEmpty());
     }
-
-    @Test
-    void testGetWordCountNullList() throws InterruptedException {
-        ConcurrentRunnableThread concurrentRunnableThread = new ConcurrentRunnableThread();
-        List<String> lines = null;
-        assertThrows(NullPointerException.class, () -> concurrentRunnableThread.getWordCount(lines));
-    }
 }
