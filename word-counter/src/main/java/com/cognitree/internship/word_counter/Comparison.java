@@ -87,7 +87,7 @@ public class Comparison {
         System.out.println("Validation of results : " + compareResults(wordCountMap, forkJoinTaskWordCount));
     }
 
-    private static boolean compareResults(Map<String, Integer> map1, Map<String, Integer> map2) {
+    static boolean compareResults(Map<String, Integer> map1, Map<String, Integer> map2) {
         if (map1.size() != map2.size()) {
             return false;
         }

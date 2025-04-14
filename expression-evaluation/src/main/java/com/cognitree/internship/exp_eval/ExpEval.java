@@ -45,7 +45,7 @@ public class ExpEval {
                 if (token instanceof VariableToken variableToken) {
                     Double value = variables.get(variableToken.getVarName());
                     if (value == null) {
-                        throw new RuntimeException("Undefined variable used: " + variableToken.getVarName());
+                        throw new RuntimeException("Please provide value for variable : " + variableToken.getVarName());
                     }
                     stack.push(value);
                 }
@@ -60,7 +60,12 @@ public class ExpEval {
             case '+' -> value1 + value2;
             case '-' -> value1 - value2;
             case '*' -> value1 * value2;
-            case '/' -> value1 / value2;
+            case '/' -> {
+                if (value2 == 0) {
+                    throw new ArithmeticException("Cannot divide by zero");
+                }
+                yield value1 / value2;
+            }
             case '^' -> Math.pow(value1, value2);
             default -> throw new RuntimeException("Unknown operator: " + operator);
         };
