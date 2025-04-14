@@ -45,7 +45,7 @@ public class AvgQuantityPerSessionReport implements Report {
 
     private void writeReport(String outputDir, Map<Integer, Set<Integer>> distinctSessionMap,
                              Map<Integer, Long> totalQuantityMap) throws IOException {
-        Path outputPath = Paths.get(outputDir, "report_average_quantity_per_session.csv");
+        Path outputPath = Paths.get(outputDir, "report_avg_quantity_per_session.csv");
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
             bufferedWriter.write("ItemId,AvgQuantityPerSession");

@@ -25,7 +25,7 @@ public class AvgQuantityPerSessionReport implements Report {
 
     @Override
     public void generateReport(String outputDir) throws IOException {
-        Path outputPath = Paths.get(outputDir, "report_average_quantity_per_session.csv");
+        Path outputPath = Paths.get(outputDir, "report_avg_quantity_per_session.csv");
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile());
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream))) {
             Map<Integer, Integer> totalQuantityMap = this.totalQuantityMap;

@@ -15,7 +15,7 @@ public class IteratorExample {
         Set<Integer> setOfNumbers = new LinkedHashSet<>(numbers);
         setOfNumbers.add(12);
         SlidingWindowIterator<Integer> slidingWindowIterator = new SlidingWindowIterator<>(setOfNumbers, 3);
-        System.out.println(" Sliding window Iteration:");
+        System.out.println("Sliding window Iteration:");
         while (slidingWindowIterator.hasNext()) {
             System.out.print(slidingWindowIterator.next() + " ");
         }

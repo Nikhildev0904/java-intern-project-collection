@@ -46,6 +46,9 @@ public class CircularQueue<T> implements Iterable<T> {
 
             @Override
             public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("next() called when no elements are left to iterate");
+                }
                 T value = array[head];
                 head = (head + 1) % array.length;
                 count++;
