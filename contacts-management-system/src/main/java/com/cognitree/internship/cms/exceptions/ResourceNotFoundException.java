@@ -1,4 +1,4 @@
-package com.cognitree.internship.cms.exception;
+package com.cognitree.internship.cms.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

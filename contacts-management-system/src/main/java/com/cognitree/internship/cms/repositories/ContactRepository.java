@@ -1,6 +1,6 @@
-package com.cognitree.internship.cms.repository;
+package com.cognitree.internship.cms.repositories;
 
-import com.cognitree.internship.cms.model.Contact;
+import com.cognitree.internship.cms.models.Contact;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -15,5 +15,9 @@ public interface ContactRepository extends MongoRepository<Contact, String> {
 
     Page<Contact> findByPhoneContaining(String phone, Pageable pageable);
 
-    Page<Contact> findByCategoryIdsIn(String categoryName, Pageable pageable);
+    Page<Contact> findByCategoryIdsIn(String categoryId, Pageable pageable);
+
+    Page<Contact> findByCategoryIdsInAndContactNameContainingIgnoreCase(String categoryId, String contactName, Pageable pageable);
+
+    Page<Contact> findByCategoryIdsInAndPhoneContaining(String categoryId, String phone, Pageable pageable);
 }

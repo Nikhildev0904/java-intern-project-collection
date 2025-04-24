@@ -1,4 +1,4 @@
-package com.cognitree.internship.cms.model;
+package com.cognitree.internship.cms.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
