@@ -1,12 +1,11 @@
 package com.cognitree.internship.cms.services;
 
-import com.cognitree.internship.cms.dto.ContactCreateDTO;
-import com.cognitree.internship.cms.dto.ContactUpdateDTO;
-import com.cognitree.internship.cms.models.PagedResponse;
+import com.cognitree.internship.cms.config.TenantContext;
 import com.cognitree.internship.cms.exceptions.ResourceAlreadyExistsException;
 import com.cognitree.internship.cms.exceptions.ResourceNotFoundException;
 import com.cognitree.internship.cms.models.Category;
 import com.cognitree.internship.cms.models.Contact;
+import com.cognitree.internship.cms.models.PagedResponse;
 import com.cognitree.internship.cms.repositories.CategoryRepository;
 import com.cognitree.internship.cms.repositories.ContactRepository;
 import org.slf4j.Logger;
@@ -23,34 +22,38 @@ import java.util.Optional;
 @Service
 public class ContactService {
 
-    private final ContactRepository contactRepository;
-    private final CategoryRepository categoryRepository;
     private static final Logger logger = LoggerFactory.getLogger(ContactService.class);
 
+    private final ContactRepository contactRepository;
+    private final CategoryRepository categoryRepository;
+    private final TenantContext tenantContext;
+
     @Autowired
-    public ContactService(ContactRepository contactRepository, CategoryRepository categoryRepository) {
+    public ContactService(ContactRepository contactRepository,
+                          CategoryRepository categoryRepository,
+                          TenantContext tenantContext) {
         this.contactRepository = contactRepository;
         this.categoryRepository = categoryRepository;
+        this.tenantContext = tenantContext;
     }
 
     public PagedResponse<Contact> getAllContacts(
             String contactName, String phone, String categoryName,
-            int page, int size, String sortBy, String sortOrder) {
-        logger.debug("Fetching contacts with filters - name: {}, phone: {}, categoryName: {}, page: {}", 
-                    contactName, phone, categoryName, page);
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Sort sort = Sort.by(direction, sortBy);
+            int page, int size, String sortBy, Sort.Direction sortOrder) {
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Fetching contacts with filters - name: {}, phone: {}, categoryName: {}, page: {}",
+                tenantId, contactName, phone, categoryName, page);
+        Sort sort = Sort.by(sortOrder, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Contact> contacts;
-
         if (contactName != null && !contactName.isEmpty()) {
-            logger.debug("Searching contacts by name: {}", contactName);
+            logger.debug("[Tenant: {}] Searching contacts by name: {}", tenantId, contactName);
             contacts = contactRepository.findByContactNameContainingIgnoreCase(contactName, pageable);
         } else if (phone != null && !phone.isEmpty()) {
-            logger.debug("Searching contacts by phone: {}", phone);
+            logger.debug("[Tenant: {}] Searching contacts by phone: {}", tenantId, phone);
             contacts = contactRepository.findByPhoneContaining(phone, pageable);
         } else if (categoryName != null && !categoryName.isEmpty()) {
-            logger.debug("Searching contacts by category name: {}", categoryName);
+            logger.debug("[Tenant: {}] Searching contacts by category name: {}", tenantId, categoryName);
             List<Category> categories = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName, pageable).getContent();
             List<String> categoryIds = categories.stream().map(Category::getId).toList();
             List<Contact> contactList = new ArrayList<>();
@@ -59,152 +62,154 @@ public class ContactService {
             }
             contacts = contactList.isEmpty() ? Page.empty() : new PageImpl<>(contactList, PageRequest.of(page, size, sort), contactList.size());
         } else {
-            logger.debug("Fetching all contacts");
+            logger.debug("[Tenant: {}] Fetching all contacts", tenantId);
             contacts = contactRepository.findAll(pageable);
         }
-        logger.debug("Found {} contacts", contacts.getTotalElements());
+        logger.debug("[Tenant: {}] Found {} contacts", tenantId, contacts.getTotalElements());
         return PagedResponse.fromPage(contacts);
     }
 
-    public Contact createContact(ContactCreateDTO contactCreateDTO) {
-        logger.debug("Creating new contact with phone: {}", contactCreateDTO.getPhone());
-        Optional<Contact> existingContact = contactRepository.findByPhone(contactCreateDTO.getPhone());
+    public Contact createContact(Contact contact) {
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Creating new contact with phone: {}", tenantId, contact.getPhone());
+        Optional<Contact> existingContact = contactRepository.findByPhone(contact.getPhone());
         if (existingContact.isPresent()) {
-            logger.error("Contact already exists with phone: {}", contactCreateDTO.getPhone());
-            throw new ResourceAlreadyExistsException("Contact with phone number " + contactCreateDTO.getPhone() + " already exists");
+            logger.error("[Tenant: {}] Contact already exists with phone: {}", tenantId, contact.getPhone());
+            throw new ResourceAlreadyExistsException("Contact with phone number " + contact.getPhone() + " already exists");
         }
-        Contact contact = new Contact();
-        contact.setContactName(contactCreateDTO.getContactName());
-        contact.setPhone(contactCreateDTO.getPhone());
-        contact.setEmail(contactCreateDTO.getEmail());
-        if (contactCreateDTO.getCategoryIds() != null && !contactCreateDTO.getCategoryIds().isEmpty()) {
-            List<String> categoryIds = contactCreateDTO.getCategoryIds();
+        // Validate category IDs if provided
+        if (contact.getCategoryIds() != null && !contact.getCategoryIds().isEmpty()) {
+            List<String> categoryIds = contact.getCategoryIds();
             for (String categoryId : categoryIds) {
                 if (!categoryRepository.existsById(categoryId)) {
-                    logger.error("Category not found with ID: {}", categoryId);
+                    logger.error("[Tenant: {}] Category not found with ID: {}", tenantId, categoryId);
                     throw new ResourceNotFoundException("Category not found with id: " + categoryId);
                 }
             }
-            contact.setCategoryIds(categoryIds);
-            logger.debug("Assigning {} categories to new contact", categoryIds.size());
+            logger.debug("[Tenant: {}] Assigning {} categories to new contact", tenantId, categoryIds.size());
         }
         Contact savedContact = contactRepository.save(contact);
-        logger.info("Created new contact with ID: {}", savedContact.getId());
+        logger.info("[Tenant: {}] Created new contact with ID: {}", tenantId, savedContact.getId());
         return savedContact;
     }
 
     public Contact getContactById(String id) {
-        logger.debug("Fetching contact by ID: {}", id);
-        Contact contact = findContactById(id);
-        return contact;
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Fetching contact by ID: {}", tenantId, id);
+        return findContactById(id);
     }
 
-    public Contact updateContact(String id, ContactUpdateDTO contactUpdateDTO) {
-        logger.debug("Updating contact with ID: {}", id);
-        Contact contact = findContactById(id);
-        if (contactUpdateDTO.getContactName() != null) {
-            contact.setContactName(contactUpdateDTO.getContactName());
-        }
-        if (contactUpdateDTO.getPhone() != null) {
-            logger.debug("Updating phone number for contact: {}", id);
-            Optional<Contact> existingContact = contactRepository.findByPhone(contactUpdateDTO.getPhone());
-            if (existingContact.isPresent() && !existingContact.get().getId().equals(id)) {
-                logger.error("Phone number already exists: {}", contactUpdateDTO.getPhone());
-                throw new ResourceAlreadyExistsException("Contact with phone number " + contactUpdateDTO.getPhone() + " already exists");
+    public Contact updateContact(String id, Contact contactDetails) {
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Updating contact with ID: {}", tenantId, id);
+        Contact existingContact = findContactById(id);
+        // Check if phone is being updated and if it already exists
+        if (contactDetails.getPhone() != null &&
+                !existingContact.getPhone().equals(contactDetails.getPhone())) {
+            logger.debug("[Tenant: {}] Updating phone number for contact: {}", tenantId, id);
+            Optional<Contact> contactWithPhone = contactRepository.findByPhone(contactDetails.getPhone());
+            if (contactWithPhone.isPresent() && !contactWithPhone.get().getId().equals(id)) {
+                logger.error("[Tenant: {}] Phone number already exists: {}", tenantId, contactDetails.getPhone());
+                throw new ResourceAlreadyExistsException("Contact with phone number " +
+                        contactDetails.getPhone() + " already exists");
             }
-            contact.setPhone(contactUpdateDTO.getPhone());
         }
-        if (contactUpdateDTO.getEmail() != null) {
-            contact.setEmail(contactUpdateDTO.getEmail());
+        if (contactDetails.getCategoryIds() != null && !contactDetails.getCategoryIds().isEmpty()) {
+            for (String categoryId : contactDetails.getCategoryIds()) {
+                if (!categoryRepository.existsById(categoryId)) {
+                    logger.error("[Tenant: {}] Category not found with ID: {}", tenantId, categoryId);
+                    throw new ResourceNotFoundException("Category not found with id: " + categoryId);
+                }
+            }
+            logger.debug("[Tenant: {}] Updating categories for contact: {}", tenantId, id);
         }
-        if (contactUpdateDTO.getCategoryIds() != null) {
-            logger.debug("Updating categories for contact: {}", id);
-            contact.setCategoryIds(contactUpdateDTO.getCategoryIds());
-        }
-        Contact updatedContact = contactRepository.save(contact);
-        logger.info("Updated contact with ID: {}", id);
+        existingContact.updateFrom(contactDetails);
+        Contact updatedContact = contactRepository.save(existingContact);
+        logger.info("[Tenant: {}] Updated contact with ID: {}", tenantId, id);
         return updatedContact;
     }
 
     public void deleteContact(String contactId) {
-        logger.debug("Attempting to delete contact with ID: {}", contactId);
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Attempting to delete contact with ID: {}", tenantId, contactId);
         if (!contactRepository.existsById(contactId)) {
-            logger.error("Contact not found with ID: {}", contactId);
+            logger.error("[Tenant: {}] Contact not found with ID: {}", tenantId, contactId);
             throw new ResourceNotFoundException("Contact not found with contactId: " + contactId);
         }
         Contact contact = findContactById(contactId);
         contactRepository.delete(contact);
-        logger.info("Deleted contact with ID: {}", contactId);
+        logger.info("[Tenant: {}] Deleted contact with ID: {}", tenantId, contactId);
     }
 
     public PagedResponse<Category> getContactCategories(
             String contactId,
             String categoryName,
             int page, int pageSize,
-            String sortBy, String sortOrder
+            String sortBy, Sort.Direction sortOrder
     ) {
-        logger.debug("Fetching categories for contact: {}, name filter: {}, page: {}", 
-                    contactId, categoryName, page);
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Fetching categories for contact: {}, name filter: {}, page: {}",
+                tenantId, contactId, categoryName, page);
         Contact contact = getContactById(contactId);
         List<String> categoryIds = contact.getCategoryIds();
         if (categoryIds.isEmpty()) {
-            logger.debug("No categories found for contact: {}", contactId);
+            logger.debug("[Tenant: {}] No categories found for contact: {}", tenantId, contactId);
             return PagedResponse.fromPage(Page.empty());
         }
-        Sort.Direction dir = sortOrder.equalsIgnoreCase("desc")
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(dir, sortBy));
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortOrder, sortBy));
         Page<Category> categoriesPage;
         if (StringUtils.hasText(categoryName)) {
-            logger.debug("Searching categories by name: {} for contact: {}", categoryName, contactId);
+            logger.debug("[Tenant: {}] Searching categories by name: {} for contact: {}", tenantId, categoryName, contactId);
             categoriesPage = categoryRepository
                     .findByIdInAndCategoryNameContainingIgnoreCase(
                             categoryIds, categoryName, pageable);
         } else {
-            logger.debug("Fetching all categories for contact: {}", contactId);
+            logger.debug("[Tenant: {}] Fetching all categories for contact: {}", tenantId, contactId);
             categoriesPage = categoryRepository
                     .findByIdIn(categoryIds, pageable);
         }
-        logger.debug("Found {} categories for contact {}", categoriesPage.getTotalElements(), contactId);
+        logger.debug("[Tenant: {}] Found {} categories for contact {}", tenantId, categoriesPage.getTotalElements(), contactId);
         return PagedResponse.fromPage(categoriesPage);
     }
 
     public Contact addCategoryToContact(String contactId, String categoryId) {
-        logger.debug("Adding category {} to contact {}", categoryId, contactId);
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Adding category {} to contact {}", tenantId, categoryId, contactId);
         Contact contact = getContactById(contactId);
         categoryRepository.findById(categoryId)
                 .orElseThrow(() -> {
-                    logger.error("Category not found with ID: {}", categoryId);
+                    logger.error("[Tenant: {}] Category not found with ID: {}", tenantId, categoryId);
                     return new ResourceNotFoundException("Category not found");
                 });
         boolean categoryExists = contact.getCategoryIds().contains(categoryId);
         if (!categoryExists) {
             contact.getCategoryIds().add(categoryId);
-            contactRepository.save(contact);
-            logger.info("Added category {} to contact {}", categoryId, contactId);
+            contact = contactRepository.save(contact);
+            logger.info("[Tenant: {}] Added category {} to contact {}", tenantId, categoryId, contactId);
         } else {
-            logger.debug("Category {} already assigned to contact {}", categoryId, contactId);
+            logger.debug("[Tenant: {}] Category {} already assigned to contact {}", tenantId, categoryId, contactId);
         }
         return contact;
     }
 
     public void removeCategoryFromContact(String contactId, String categoryId) {
-        logger.debug("Removing category {} from contact {}", categoryId, contactId);
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Removing category {} from contact {}", tenantId, categoryId, contactId);
         Contact contact = getContactById(contactId);
         boolean removed = contact.getCategoryIds().remove(categoryId);
         if (!removed) {
-            logger.error("Category {} not associated with contact {}", categoryId, contactId);
+            logger.error("[Tenant: {}] Category {} not associated with contact {}", tenantId, categoryId, contactId);
             throw new ResourceNotFoundException("Category not associated with this contact");
         }
         contactRepository.save(contact);
-        logger.info("Removed category {} from contact {}", categoryId, contactId);
+        logger.info("[Tenant: {}] Removed category {} from contact {}", tenantId, categoryId, contactId);
     }
 
     private Contact findContactById(String id) {
+        String tenantId = tenantContext.getTenantId();
         return contactRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.error("Contact not found with ID: {}", id);
+                    logger.error("[Tenant: {}] Contact not found with ID: {}", tenantId, id);
                     return new ResourceNotFoundException("Contact not found with id: " + id);
                 });
     }

@@ -1,12 +1,11 @@
 package com.cognitree.internship.cms.services;
 
-import com.cognitree.internship.cms.dto.CategoryCreateDTO;
-import com.cognitree.internship.cms.dto.CategoryUpdateDTO;
-import com.cognitree.internship.cms.models.PagedResponse;
+import com.cognitree.internship.cms.config.TenantContext;
 import com.cognitree.internship.cms.exceptions.ResourceAlreadyExistsException;
 import com.cognitree.internship.cms.exceptions.ResourceNotFoundException;
 import com.cognitree.internship.cms.models.Category;
 import com.cognitree.internship.cms.models.Contact;
+import com.cognitree.internship.cms.models.PagedResponse;
 import com.cognitree.internship.cms.repositories.CategoryRepository;
 import com.cognitree.internship.cms.repositories.ContactRepository;
 import org.slf4j.Logger;
@@ -21,107 +20,112 @@ import org.springframework.stereotype.Service;
 @Service
 public class CategoryService {
 
-    private final CategoryRepository categoryRepository;
-    private final ContactRepository contactRepository;
     private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
+    private final CategoryRepository categoryRepository;
+    private final ContactRepository contactRepository;
+    private final TenantContext tenantContext;
+
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, ContactRepository contactRepository) {
+    public CategoryService(CategoryRepository categoryRepository,
+                           ContactRepository contactRepository,
+                           TenantContext tenantContext) {
         this.categoryRepository = categoryRepository;
         this.contactRepository = contactRepository;
+        this.tenantContext = tenantContext;
     }
 
     public PagedResponse<Category> getAllCategories(String categoryName, int page, int size,
-                                                    String sortBy, String sortOrder) {
-        logger.debug("Fetching categories with name: {}, page: {}, size: {}, sortBy: {}, sortOrder: {}", 
-                    categoryName, page, size, sortBy, sortOrder);
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+                                                    String sortBy, Sort.Direction sortOrder) {
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Fetching categories with name: {}, page: {}", tenantId, categoryName, page);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortOrder, sortBy));
         Page<Category> categoriesPage;
         if (categoryName != null && !categoryName.isEmpty()) {
-            logger.debug("Searching categories by name: {}", categoryName);
+            logger.debug("[Tenant: {}] Searching categories by name: {}", tenantId, categoryName);
             categoriesPage = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName, pageable);
         } else {
-            logger.debug("Fetching all categories");
+            logger.debug("[Tenant: {}] Fetching all categories", tenantId);
             categoriesPage = categoryRepository.findAll(pageable);
         }
-        logger.debug("Found {} categories", categoriesPage.getTotalElements());
+        logger.debug("[Tenant: {}] Found {} categories", tenantId, categoriesPage.getTotalElements());
         return PagedResponse.fromPage(categoriesPage);
     }
 
     public Category getCategoryById(String categoryId) {
-        logger.debug("Fetching category by ID: {}", categoryId);
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Fetching category by ID: {}", tenantId, categoryId);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> {
-                    logger.error("Category not found with ID: {}", categoryId);
+                    logger.error("[Tenant: {}] Category not found with ID: {}", tenantId, categoryId);
                     return new ResourceNotFoundException("Category not found with id: " + categoryId);
                 });
-        logger.debug("Found category: {}", category.getCategoryName());
+
+        logger.debug("[Tenant: {}] Found category: {}", tenantId, category.getCategoryName());
         return category;
     }
 
-    public Category createCategory(CategoryCreateDTO categoryCreateDTO) {
-        logger.debug("Creating new category with name: {}", categoryCreateDTO.getCategoryName());
-        if (categoryRepository.existsByCategoryNameIgnoreCase(categoryCreateDTO.getCategoryName())) {
-            logger.error("Category already exists with name: {}", categoryCreateDTO.getCategoryName());
-            throw new ResourceAlreadyExistsException("Category with name: " + categoryCreateDTO.getCategoryName() + " already exists");
+    public Category createCategory(Category category) {
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Creating new category with name: {}", tenantId, category.getCategoryName());
+        if (categoryRepository.existsByCategoryNameIgnoreCase(category.getCategoryName())) {
+            logger.error("[Tenant: {}] Category already exists with name: {}", tenantId, category.getCategoryName());
+            throw new ResourceAlreadyExistsException("Category with name: " + category.getCategoryName() + " already exists");
         }
-        Category category = new Category();
-        category.setCategoryName(categoryCreateDTO.getCategoryName());
-        category.setDescription(categoryCreateDTO.getDescription());
         Category savedCategory = categoryRepository.save(category);
-        logger.info("Created new category with ID: {}", savedCategory.getId());
+        logger.info("[Tenant: {}] Created new category with ID: {}", tenantId, savedCategory.getId());
         return savedCategory;
     }
 
-    public Category updateCategory(String categoryId, CategoryUpdateDTO categoryUpdateDTO) {
-        logger.debug("Updating category with ID: {}", categoryId);
+    public Category updateCategory(String categoryId, Category categoryDetails) {
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Updating category with ID: {}", tenantId, categoryId);
         Category existingCategory = getCategoryById(categoryId);
-        if (categoryUpdateDTO.getCategoryName() != null) {
-            if (!existingCategory.getCategoryName().equalsIgnoreCase(categoryUpdateDTO.getCategoryName()) &&
-                    categoryRepository.existsByCategoryNameIgnoreCase(categoryUpdateDTO.getCategoryName())) {
-                logger.error("Cannot update category. Name already exists: {}", categoryUpdateDTO.getCategoryName());
-                throw new ResourceAlreadyExistsException("Category with name: " + categoryUpdateDTO.getCategoryName() + " already exists");
-            }
-            existingCategory.setCategoryName(categoryUpdateDTO.getCategoryName());
+        if (categoryDetails.getCategoryName() != null &&
+                !existingCategory.getCategoryName().equalsIgnoreCase(categoryDetails.getCategoryName()) &&
+                categoryRepository.existsByCategoryNameIgnoreCase(categoryDetails.getCategoryName())) {
+            logger.error("[Tenant: {}] Cannot update category. Name already exists: {}",
+                    tenantId, categoryDetails.getCategoryName());
+            throw new ResourceAlreadyExistsException("Category with name: " +
+                    categoryDetails.getCategoryName() + " already exists");
         }
-        if (categoryUpdateDTO.getDescription() != null) {
-            existingCategory.setDescription(categoryUpdateDTO.getDescription());
-        }
+        existingCategory.updateFrom(categoryDetails);
         Category updatedCategory = categoryRepository.save(existingCategory);
-        logger.info("Updated category with ID: {}", categoryId);
+        logger.info("[Tenant: {}] Updated category with ID: {}", tenantId, categoryId);
         return updatedCategory;
     }
 
     public void deleteCategory(String categoryId) {
-        logger.debug("Attempting to delete category with ID: {}", categoryId);
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Attempting to delete category with ID: {}", tenantId, categoryId);
         if (!categoryRepository.existsById(categoryId)) {
-            logger.error("Cannot delete category. Not found with ID: {}", categoryId);
+            logger.error("[Tenant: {}] Cannot delete category. Not found with ID: {}", tenantId, categoryId);
             throw new ResourceNotFoundException("Category not found with id: " + categoryId);
         }
         categoryRepository.deleteById(categoryId);
-        logger.info("Deleted category with ID: {}", categoryId);
+        logger.info("[Tenant: {}] Deleted category with ID: {}", tenantId, categoryId);
     }
 
     public PagedResponse<Contact> getCategoryContacts(String categoryId, String contactName, String phone,
-                                                      int page, int size, String sortBy, String sortOrder) {
-        logger.debug("Fetching contacts for category: {}, name: {}, phone: {}, page: {}", 
-                    categoryId, contactName, phone, page);
+                                                      int page, int size, String sortBy, Sort.Direction sortOrder) {
+        String tenantId = tenantContext.getTenantId();
+        logger.debug("[Tenant: {}] Fetching contacts for category: {}, name: {}, phone: {}, page: {}",
+                tenantId, categoryId, contactName, phone, page);
         getCategoryById(categoryId);
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortOrder, sortBy));
         Page<Contact> contactsPage;
         if (contactName != null && !contactName.isEmpty()) {
-            logger.debug("Searching contacts by name: {} in category: {}", contactName, categoryId);
+            logger.debug("[Tenant: {}] Searching contacts by name: {} in category: {}", tenantId, contactName, categoryId);
             contactsPage = contactRepository.findByCategoryIdsInAndContactNameContainingIgnoreCase(categoryId, contactName, pageable);
         } else if (phone != null && !phone.isEmpty()) {
-            logger.debug("Searching contacts by phone: {} in category: {}", phone, categoryId);
+            logger.debug("[Tenant: {}] Searching contacts by phone: {} in category: {}", tenantId, phone, categoryId);
             contactsPage = contactRepository.findByCategoryIdsInAndPhoneContaining(categoryId, phone, pageable);
         } else {
-            logger.debug("Fetching all contacts in category: {}", categoryId);
+            logger.debug("[Tenant: {}] Fetching all contacts in category: {}", tenantId, categoryId);
             contactsPage = contactRepository.findByCategoryIdsIn(categoryId, pageable);
         }
-        logger.debug("Found {} contacts in category {}", contactsPage.getTotalElements(), categoryId);
+        logger.debug("[Tenant: {}] Found {} contacts in category {}", tenantId, contactsPage.getTotalElements(), categoryId);
         return PagedResponse.fromPage(contactsPage);
     }
+
 }

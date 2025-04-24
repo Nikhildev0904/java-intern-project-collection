@@ -1,15 +1,14 @@
 package com.cognitree.internship.cms.controllers;
 
-import com.cognitree.internship.cms.dto.ContactCreateDTO;
-import com.cognitree.internship.cms.dto.ContactUpdateDTO;
-import com.cognitree.internship.cms.models.PagedResponse;
 import com.cognitree.internship.cms.models.Category;
 import com.cognitree.internship.cms.models.Contact;
+import com.cognitree.internship.cms.models.PagedResponse;
 import com.cognitree.internship.cms.services.ContactService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/contacts")
 public class ContactController {
 
-    private final ContactService contactService;
     private static final Logger logger = LoggerFactory.getLogger(ContactController.class);
+
+    private final ContactService contactService;
 
     @Autowired
     public ContactController(ContactService contactService) {
@@ -34,10 +34,10 @@ public class ContactController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(defaultValue = "contactName") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortOrder
+            @RequestParam(defaultValue = "ASC") Sort.Direction sortOrder
     ) {
-        logger.info("Fetching contacts with filters: contactName={}, phone={}, categoryName={}, page={}", 
-                    contactName, phone, categoryName, page);
+        logger.info("Fetching contacts with filters: contactName={}, phone={}, categoryName={}, page={}",
+                contactName, phone, categoryName, page);
         PagedResponse<Contact> response = contactService.getAllContacts(
                 contactName, phone, categoryName, page, pageSize, sortBy, sortOrder);
         logger.debug("Fetched {} contacts", response.getTotalElements());
@@ -45,9 +45,9 @@ public class ContactController {
     }
 
     @PostMapping
-    public ResponseEntity<Contact> createContact(@Valid @RequestBody ContactCreateDTO createDTO) {
-        logger.info("Creating new contact with name: {}", createDTO.getContactName());
-        Contact createdContact = contactService.createContact(createDTO);
+    public ResponseEntity<Contact> createContact(@Valid @RequestBody Contact contact) {
+        logger.info("Creating new contact with name: {}", contact.getContactName());
+        Contact createdContact = contactService.createContact(contact);
         logger.info("Created contact with ID: {}", createdContact.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdContact);
     }
@@ -62,9 +62,9 @@ public class ContactController {
     @PutMapping("/{contactId}")
     public ResponseEntity<Contact> updateContact(
             @PathVariable String contactId,
-            @Valid @RequestBody ContactUpdateDTO updateDTO) {
+            @Valid @RequestBody Contact contact) {
         logger.info("Updating contact with ID: {}", contactId);
-        Contact updatedContact = contactService.updateContact(contactId, updateDTO);
+        Contact updatedContact = contactService.updateContact(contactId, contact);
         logger.info("Successfully updated contact: {}", contactId);
         return ResponseEntity.ok(updatedContact);
     }
@@ -84,7 +84,7 @@ public class ContactController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(defaultValue = "categoryName") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortOrder) {
+            @RequestParam(defaultValue = "ASC") Sort.Direction sortOrder) {
         logger.info("Fetching categories for contact ID: {} with name filter: {}", contactId, categoryName);
         PagedResponse<Category> categories = contactService.getContactCategories(
                 contactId, categoryName, page, pageSize, sortBy, sortOrder);
