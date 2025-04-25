@@ -19,6 +19,8 @@ public class MultiTenantMongoConfig {
     private static final Logger logger = LoggerFactory.getLogger(MultiTenantMongoConfig.class);
     private static final String DEFAULT_DB = "default";
 
+    private TenantContext tenantContext;
+
     @Value("${spring.data.mongodb.host:localhost}")
     private String host;
 
@@ -26,7 +28,9 @@ public class MultiTenantMongoConfig {
     private int port;
 
     @Autowired
-    private TenantContext tenantContext;
+    public void setTenantContext(TenantContext tenantContext) {
+        this.tenantContext = tenantContext;
+    }
 
     @Bean
     public MongoClient mongoClient() {

@@ -34,8 +34,7 @@ public class ContactController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(defaultValue = "contactName") String sortBy,
-            @RequestParam(defaultValue = "ASC") Sort.Direction sortOrder
-    ) {
+            @RequestParam(defaultValue = "ASC") Sort.Direction sortOrder) {
         logger.info("Fetching contacts with filters: contactName={}, phone={}, categoryName={}, page={}",
                 contactName, phone, categoryName, page);
         PagedResponse<Contact> response = contactService.getAllContacts(

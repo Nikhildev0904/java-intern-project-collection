@@ -32,7 +32,6 @@ public class TenantController {
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "ASC") Sort.Direction sortOrder) {
-
         logger.info("Fetching tenants with name filter: {}, page: {}", name, page);
         PagedResponse<Tenant> response = tenantService.getAllTenants(name, page, pageSize, sortBy, sortOrder);
         logger.debug("Fetched {} tenants", response.getTotalElements());

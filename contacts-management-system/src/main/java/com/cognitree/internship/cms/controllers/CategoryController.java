@@ -32,8 +32,7 @@ public class CategoryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int pageSize,
             @RequestParam(defaultValue = "categoryName") String sortBy,
-            @RequestParam(defaultValue = "ASC") Sort.Direction sortOrder
-    ) {
+            @RequestParam(defaultValue = "ASC") Sort.Direction sortOrder) {
         logger.info("Fetching categories with categoryName={}, page={}, pageSize={}, sortBy={}, sortOrder={}",
                 categoryName, page, pageSize, sortBy, sortOrder);
         PagedResponse<Category> response = categoryService.getAllCategories(categoryName, page, pageSize, sortBy, sortOrder);
