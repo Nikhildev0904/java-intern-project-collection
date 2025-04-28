@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TenantContext {
-    private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
+
+    private static final ThreadLocal<String> currentTenant = ThreadLocal.withInitial(() -> null);
 
     public void setTenantId(String tenantId) {
         currentTenant.set(tenantId);

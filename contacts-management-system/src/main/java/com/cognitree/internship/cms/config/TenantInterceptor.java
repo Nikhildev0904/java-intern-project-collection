@@ -1,12 +1,14 @@
 package com.cognitree.internship.cms.config;
 
-import com.cognitree.internship.cms.repositories.TenantRepository;
+import com.cognitree.internship.cms.models.Tenant;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -14,46 +16,41 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class TenantInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(TenantInterceptor.class);
-    private static final String TENANT_HEADER = "X-Tenant-ID";
 
     private TenantContext tenantContext;
-
-    private TenantRepository tenantRepository;
 
     @Autowired
     public void setTenantContext(TenantContext tenantContext) {
         this.tenantContext = tenantContext;
     }
 
-    @Autowired
-    public void setTenantRepository(TenantRepository tenantRepository) {
-        this.tenantRepository = tenantRepository;
-    }
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestPath = request.getRequestURI();
-        // Skip tenant validation for admin paths and error path
-        if (requestPath.startsWith("/admin/") || requestPath.equals("/error")) {
-            logger.info("Path excluded from tenant validation: {}", requestPath);
+        if (requestPath.equals("/error")) {
             return true;
         }
-        String tenantId = request.getHeader(TENANT_HEADER);
-        if (tenantId == null || tenantId.isEmpty()) {
-            logger.error("No tenant ID provided in request header for path: {}", requestPath);
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.getWriter().write("Tenant ID is required (X-Tenant-ID header)");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() ||
+                authentication.getPrincipal().equals("anonymousUser")) {
+            logger.error("No authenticated user for path: {}", requestPath);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write("Authentication required");
             return false;
         }
-        // Validate that the tenant ID exists in the system
-        if (!tenantRepository.existsById(tenantId)) {
-            logger.error("Invalid tenant ID provided: {}", tenantId);
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            response.getWriter().write("Invalid tenant ID");
-            return false;
+        Tenant tenant = (Tenant) authentication.getPrincipal();
+        if (requestPath.startsWith("/admin/")) {
+            if (!"ADMIN".equalsIgnoreCase(tenant.getRole())) {
+                logger.error("Non-admin user attempted to access admin path: {}", requestPath);
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                response.getWriter().write("Admin access required");
+                return false;
+            }
+            return true;
         }
-        logger.debug("Setting tenant context to: {} for path: {}", tenantId, requestPath);
-        tenantContext.setTenantId(tenantId);
+        logger.debug("Setting tenant context to tenant ID: {} for user: {}",
+                tenant.getId(), tenant.getUsername());
+        tenantContext.setTenantId(tenant.getId());
         return true;
     }
 

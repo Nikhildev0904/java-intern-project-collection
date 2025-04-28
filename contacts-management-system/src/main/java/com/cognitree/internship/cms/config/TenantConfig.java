@@ -13,14 +13,14 @@ public class TenantConfig implements WebMvcConfigurer {
         return new TenantInterceptor();
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(tenantInterceptor())
-                .excludePathPatterns("/admin/**"); // Exclude admin paths from tenant requirement
-    }
-
     @Bean
     public TenantContext tenantContext() {
         return new TenantContext();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(tenantInterceptor())
+                .excludePathPatterns("/admin/**");
     }
 }

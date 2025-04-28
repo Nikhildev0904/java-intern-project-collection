@@ -11,11 +11,10 @@ import com.cognitree.internship.cms.repositories.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CategoryService {
@@ -43,7 +42,8 @@ public class CategoryService {
         Page<Category> categoriesPage;
         if (categoryName != null && !categoryName.isEmpty()) {
             logger.debug("[Tenant: {}] Searching categories by name: {}", tenantId, categoryName);
-            categoriesPage = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName, pageable);
+            List<Category> categoryList = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
+            categoriesPage = new PageImpl<>(categoryList, pageable, categoryList.size());
         } else {
             logger.debug("[Tenant: {}] Fetching all categories", tenantId);
             categoriesPage = categoryRepository.findAll(pageable);
@@ -60,7 +60,6 @@ public class CategoryService {
                     logger.error("[Tenant: {}] Category not found with ID: {}", tenantId, categoryId);
                     return new ResourceNotFoundException("Category not found with id: " + categoryId);
                 });
-
         logger.debug("[Tenant: {}] Found category: {}", tenantId, category.getCategoryName());
         return category;
     }
@@ -127,5 +126,4 @@ public class CategoryService {
         logger.debug("[Tenant: {}] Found {} contacts in category {}", tenantId, contactsPage.getTotalElements(), categoryId);
         return PagedResponse.fromPage(contactsPage);
     }
-
 }

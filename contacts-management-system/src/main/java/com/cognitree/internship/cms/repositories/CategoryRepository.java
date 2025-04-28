@@ -11,12 +11,12 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends MongoRepository<Category, String> {
 
-    Page<Category> findByCategoryNameContainingIgnoreCase(String categoryName, Pageable pageable);
-
-    boolean existsByCategoryNameIgnoreCase(String categoryName);
+    List<Category> findByCategoryNameContainingIgnoreCase(String categoryName);
 
     Page<Category> findByIdIn(List<String> categoryIds, Pageable pageable);
 
     Page<Category> findByIdInAndCategoryNameContainingIgnoreCase(List<String> categoryIds, String categoryName, Pageable pageable);
+
+    boolean existsByCategoryNameIgnoreCase(String categoryName);
 }
 

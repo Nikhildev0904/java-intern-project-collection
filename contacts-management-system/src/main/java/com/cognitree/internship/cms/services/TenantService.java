@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,19 +25,19 @@ public class TenantService {
     private static final Logger logger = LoggerFactory.getLogger(TenantService.class);
     private static final String MASTER_DB = "master";
 
-    private TenantRepository tenantRepository;
-
-    private MongoClient mongoClient;
+    private final TenantRepository tenantRepository;
+    private final MongoClient mongoClient;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public void setTenantRepository(TenantRepository tenantRepository) {
+    public TenantService(TenantRepository tenantRepository,
+                         MongoClient mongoClient,
+                         BCryptPasswordEncoder passwordEncoder) {
         this.tenantRepository = tenantRepository;
+        this.mongoClient = mongoClient;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Autowired
-    public void setMongoClient(MongoClient mongoClient) {
-        this.mongoClient = mongoClient;
-    }
 
     public PagedResponse<Tenant> getAllTenants(String name, int page, int size,
                                                String sortBy, Sort.Direction sortOrder) {
@@ -62,16 +63,19 @@ public class TenantService {
 
     public Tenant createTenant(Tenant tenant) {
         logger.debug("Creating new tenant with name: {}", tenant.getName());
-        if (tenantRepository.existsByNameIgnoreCase(tenant.getName())) {
-            logger.error("Tenant already exists with name: {}", tenant.getName());
-            throw new ResourceAlreadyExistsException("Tenant with name: " + tenant.getName() + " already exists");
+        if (tenantRepository.existsByUsername(tenant.getUsername())) {
+            logger.error("Tenant already exists with username: {}", tenant.getUsername());
+            throw new ResourceAlreadyExistsException("Username already exists: " + tenant.getUsername());
         }
+        tenant.setPassword(passwordEncoder.encode(tenant.getPassword()));
         tenant.setCreatedAt(LocalDateTime.now());
         tenant.setUpdatedAt(LocalDateTime.now());
         Tenant savedTenant = tenantRepository.save(tenant);
         logger.info("Created tenant with ID: {}", savedTenant.getId());
-        String dbName = "tenant_" + savedTenant.getId();
-        initializeTenantDatabase(dbName);
+        if (!"ADMIN".equalsIgnoreCase(tenant.getRole())) {
+            String dbName = "tenant_" + savedTenant.getId();
+            initializeTenantDatabase(dbName);
+        }
         return savedTenant;
     }
 

@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Document(collection = "contacts")
 public class Contact {
+
     @Id
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String id;

@@ -11,11 +11,13 @@ import com.cognitree.internship.cms.repositories.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,13 +56,12 @@ public class ContactService {
             contacts = contactRepository.findByPhoneContaining(phone, pageable);
         } else if (categoryName != null && !categoryName.isEmpty()) {
             logger.debug("[Tenant: {}] Searching contacts by category name: {}", tenantId, categoryName);
-            List<Category> categories = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName, pageable).getContent();
-            List<String> categoryIds = categories.stream().map(Category::getId).toList();
-            List<Contact> contactList = new ArrayList<>();
-            for (String categoryId : categoryIds) {
-                contactList.addAll(contactRepository.findByCategoryIdsIn(categoryId, pageable).getContent());
+            List<Category> categories = categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
+            if (categories.isEmpty()) {
+                return PagedResponse.fromPage(Page.empty(pageable));
             }
-            contacts = contactList.isEmpty() ? Page.empty() : new PageImpl<>(contactList, PageRequest.of(page, size, sort), contactList.size());
+            List<String> categoryIds = categories.stream().map(Category::getId).toList();
+            contacts = contactRepository.findByCategoryIdsInList(categoryIds, pageable);
         } else {
             logger.debug("[Tenant: {}] Fetching all contacts", tenantId);
             contacts = contactRepository.findAll(pageable);

@@ -20,10 +20,10 @@ public class TenantController {
 
     private static final Logger logger = LoggerFactory.getLogger(TenantController.class);
 
-    private TenantService tenantService;
+    private final TenantService tenantService;
 
     @Autowired
-    public void setTenantService(TenantService tenantService) {
+    public TenantController(TenantService tenantService) {
         this.tenantService = tenantService;
     }
 
