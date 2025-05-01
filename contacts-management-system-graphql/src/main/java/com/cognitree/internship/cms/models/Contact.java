@@ -33,6 +33,7 @@ public class Contact {
     @Email(message = "Invalid email format")
     private String email;
 
+    @Indexed
     private List<String> categoryIds = new ArrayList<>();
 
     public void updateFrom(Contact source) {

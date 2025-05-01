@@ -78,6 +78,7 @@ type Category {
     id: ID!
     categoryName: String!
     description: String
+    contacts(contactName: String, phone: String, page: Int = 0, pageSize: Int = 20, sortBy: String = "contactName", sortOrder: SortDirection = ASC): ContactPage
 }
 
 input CategoryInput {
@@ -90,8 +91,7 @@ type Contact {
     contactName: String!
     phone: String!
     email: String
-    categoryIds: [ID!]
-    categories: [Category!]
+    categories(categoryName: String, page: Int = 0, pageSize: Int = 20, sortBy: String = "categoryName", sortOrder: SortDirection = ASC): CategoryPage
 }
 
 input ContactInput {
