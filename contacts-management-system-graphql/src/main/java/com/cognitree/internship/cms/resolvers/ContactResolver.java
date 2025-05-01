@@ -72,20 +72,20 @@ public class ContactResolver {
         return categories;
     }
 
-    @SchemaMapping(typeName = "Contact")
-    public List<Category> categories(Contact contact) {
-        if (contact.getCategoryIds() == null || contact.getCategoryIds().isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<Category> categories = new ArrayList<>();
-        for (String categoryId : contact.getCategoryIds()) {
-            try {
-                Category category = categoryService.getCategoryById(categoryId);
-                categories.add(category);
-            } catch (Exception e) {
-                logger.warn("GraphQL: Could not fetch category with ID: {}", categoryId, e);
-            }
-        }
+    @SchemaMapping(typeName = "Contact", field = "categories")
+    public PagedResponse<Category> categories(
+            Contact contact,
+            @Argument String categoryName,
+            @Argument Integer page,
+            @Argument Integer pageSize,
+            @Argument String sortBy,
+            @Argument Sort.Direction sortOrder) {
+        logger.info("GraphQL: Fetching categories for contact ID: {} with name filter: {}",
+                contact.getId(), categoryName);
+        PagedResponse<Category> categories = contactService.getContactCategories(
+                contact.getId(), categoryName, page, pageSize, sortBy, sortOrder);
+        logger.debug("GraphQL: Found {} categories for contact {}",
+                categories.getTotalElements(), contact.getId());
         return categories;
     }
 
